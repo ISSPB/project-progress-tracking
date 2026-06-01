@@ -459,7 +459,7 @@
             <div class="hero-head">
                 <div>
                     <h1>Integrated System — Project Progress</h1>
-                    <p class="hero-meta">Kickoff 03/02/2026 · Handover 23/06/2026 · 20 weeks</p>
+                    <p class="hero-meta">Kickoff <span id="kickoff-date-label">3rd Feb 2026</span> · Handover <span id="handover-date-label-meta">23rd Jun 2026</span> · 20 weeks</p>
                     <p class="hero-system">Live system: <a href="https://zhichar.systems.gov.bt/" target="_blank" rel="noopener noreferrer">zhichar.systems.gov.bt</a></p>
                 </div>
                 <a class="btn-outline" href="https://zhichar.systems.gov.bt/" target="_blank" rel="noopener noreferrer">Open system</a>
@@ -469,7 +469,7 @@
                 <div class="metric">
                     <p class="metric-label">Days until handover</p>
                     <p class="metric-value" id="days-remaining">—</p>
-                    <p class="metric-note">Due <span id="handover-date-label">23/06/2026</span></p>
+                    <p class="metric-note">Due <span id="handover-date-label">23rd Jun 2026</span></p>
                 </div>
                 <div class="metric">
                     <p class="metric-label">Time elapsed</p>
@@ -537,36 +537,36 @@
                             <tr>
                                 <td class="phase">1</td>
                                 <td>Inception report, SRS, system architecture &amp; design document</td>
-                                <td class="date">24/02/2026</td>
+                                <td class="date">24th Feb 2026</td>
                                 <td>20%</td>
                             </tr>
                             <tr>
                                 <td class="phase">2</td>
                                 <td>Core modules — RBAC, MIS, building info, spatial plan, emergency shelter, public portal</td>
-                                <td class="date">26/05/2026</td>
+                                <td class="date">26th May 2026</td>
                                 <td>40%</td>
                             </tr>
                             <tr>
                                 <td class="phase">3</td>
                                 <td>Deployment, configuration, operations, Zhichar migration</td>
-                                <td class="date">02/06/2026</td>
+                                <td class="date">2nd Jun 2026</td>
                                 <td>30%</td>
                             </tr>
                             <tr>
                                 <td class="phase">4</td>
                                 <td>UAT completed</td>
-                                <td class="date">09/06/2026</td>
+                                <td class="date">9th Jun 2026</td>
                                 <td rowspan="3">10%</td>
                             </tr>
                             <tr>
                                 <td class="phase">5</td>
                                 <td>Admin guides, SRS updates, manuals, video guides</td>
-                                <td class="date">16/06/2026</td>
+                                <td class="date">16th Jun 2026</td>
                             </tr>
                             <tr>
                                 <td class="phase">6</td>
                                 <td>Administrator training &amp; final report</td>
-                                <td class="date">23/06/2026</td>
+                                <td class="date">23rd Jun 2026</td>
                             </tr>
                         </tbody>
                     </table>
@@ -629,13 +629,32 @@
             handoverDate: '2026-06-23'
         };
 
+        const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
         const paymentRows = [
-            { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '23/03/2026', sort: '2026-03-23' },
-            { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '20/03/2026', sort: '2026-03-20' },
+            { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '2026-03-23', sort: '2026-03-23' },
+            { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '2026-03-20', sort: '2026-03-20' },
             { num: 3, particular: 'Workshop at Paro — TADA / Mileage', amount: 87215.75, date: null, sort: '9999-12-31' },
-            { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '07/04/2026', sort: '2026-04-07' },
-            { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '21/06/2026', sort: '2026-06-21' }
+            { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '2026-04-07', sort: '2026-04-07' },
+            { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '2026-06-21', sort: '2026-06-21' }
         ];
+
+        function ordinalDay(day) {
+            const mod100 = day % 100;
+            if (mod100 >= 11 && mod100 <= 13) return day + 'th';
+            switch (day % 10) {
+                case 1: return day + 'st';
+                case 2: return day + 'nd';
+                case 3: return day + 'rd';
+                default: return day + 'th';
+            }
+        }
+
+        function formatReadableDate(iso) {
+            if (!iso) return '—';
+            const [y, m, d] = iso.split('-').map(Number);
+            return ordinalDay(d) + ' ' + MONTHS_SHORT[m - 1] + ' ' + y;
+        }
 
         function formatNu(n) {
             return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -686,11 +705,15 @@
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
+            document.getElementById('kickoff-date-label').textContent = formatReadableDate(kickoffDate);
+            document.getElementById('handover-date-label-meta').textContent = formatReadableDate(handoverDate);
+            document.getElementById('handover-date-label').textContent = formatReadableDate(handoverDate);
+
             setDaysRemaining(daysBetween(today, parseIsoDate(handoverDate)));
             const elapsed = daysBetween(parseIsoDate(kickoffDate), today);
             if (elapsed >= 0) {
                 document.getElementById('elapsed-days-value').textContent = elapsed + ' days';
-                document.getElementById('elapsed-days').textContent = 'Since 03/02/2026';
+                document.getElementById('elapsed-days').textContent = 'Since ' + formatReadableDate(kickoffDate);
             } else {
                 document.getElementById('elapsed-days-value').textContent = '—';
                 document.getElementById('elapsed-days').textContent = '—';
@@ -708,14 +731,14 @@
                     <td>${row.num}</td>
                     <td>${row.particular}</td>
                     <td class="num">${formatNu(row.amount)}</td>
-                    <td>${row.date || '—'}</td>
+                    <td>${formatReadableDate(row.date)}</td>
                 </tr>`;
             });
             document.getElementById('payment-total').textContent = formatNu(total);
 
             [...paymentRows].sort((a, b) => a.sort.localeCompare(b.sort)).forEach(row => {
                 timeline.innerHTML += `<li>
-                    <div class="timeline-date">${row.date || '—'}</div>
+                    <div class="timeline-date">${formatReadableDate(row.date)}</div>
                     <div class="timeline-title">${row.particular}</div>
                     <div class="timeline-amount">Nu. ${formatNu(row.amount)}</div>
                 </li>`;
