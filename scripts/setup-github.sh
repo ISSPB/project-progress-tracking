@@ -24,7 +24,14 @@ fi
 
 if ! "$GH_BIN" repo view "$REPO" >/dev/null 2>&1; then
   echo "Creating repository $REPO ..."
-  "$GH_BIN" repo create "$REPO" --public --source=. --remote=origin --description "Integrated System project timeline and GovTech KM compliance dashboard"
+  CREATE_ARGS=(--public --source=. --push --description "Integrated System project timeline and GovTech KM compliance dashboard")
+  if /usr/bin/git remote get-url origin >/dev/null 2>&1; then
+    "$GH_BIN" repo create "$REPO" "${CREATE_ARGS[@]}" || {
+      echo "Repository may exist; continuing with existing origin remote."
+    }
+  else
+    "$GH_BIN" repo create "$REPO" "${CREATE_ARGS[@]}" --remote=origin
+  fi
 else
   if ! /usr/bin/git remote get-url origin >/dev/null 2>&1; then
     /usr/bin/git remote add origin "git@github.com:${REPO}.git"
