@@ -47,22 +47,69 @@
 
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <p class="text-gray-500 text-xs uppercase">Days until handover</p>
+                <p class="font-bold text-slate-800 mt-1 text-2xl" id="days-remaining">—</p>
+                <p class="text-gray-500 text-xs mt-1">Handover: <span id="handover-date-label">23/06/2026</span></p>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
                 <p class="text-gray-500 text-xs uppercase">Contract period</p>
                 <p class="font-bold text-slate-800 mt-1">03/02/2026 – 23/06/2026</p>
-                <p class="text-gray-500 text-xs mt-1">20 weeks</p>
+                <p class="text-gray-500 text-xs mt-1" id="elapsed-days">—</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">Final deliverable due</p>
-                <p class="font-bold text-slate-800 mt-1">23/06/2026</p>
-                <p class="text-gray-500 text-xs mt-1">Phase 6 — training & final report</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">Contract payment split</p>
-                <p class="font-bold text-slate-800 mt-1">20% · 40% · 30% · 10%</p>
+                <p class="text-gray-500 text-xs uppercase">Project budget used</p>
+                <p class="font-bold text-slate-800 mt-1" id="budget-used-pct">—</p>
+                <p class="text-gray-500 text-xs mt-1 tabular-nums" id="budget-used-amount">—</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4">
                 <p class="text-gray-500 text-xs uppercase">KM checklist</p>
                 <p class="font-bold text-slate-800 mt-1" id="overall-progress-text">0%</p>
+            </div>
+        </section>
+
+        <section class="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 class="font-bold text-slate-800 mb-4">Budget utilization</h2>
+            <div class="overflow-x-auto mb-5">
+                <table class="w-full text-sm border-collapse max-w-xl">
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="py-2 pr-4 text-gray-600">Contract amount</td>
+                            <td class="py-2 font-semibold text-right tabular-nums" id="budget-contract">—</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 text-gray-600">Project amount</td>
+                            <td class="py-2 font-semibold text-right tabular-nums" id="budget-project">—</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 text-gray-600">Amount used</td>
+                            <td class="py-2 font-semibold text-right tabular-nums text-amber-800" id="budget-used">—</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="py-2 pr-4 font-medium text-slate-800">Balance</td>
+                            <td class="py-2 font-bold text-right tabular-nums text-emerald-800" id="budget-balance">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="space-y-4 max-w-2xl">
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-600">Used vs project amount</span>
+                        <span class="font-semibold tabular-nums" id="budget-bar-project-label">—</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden border">
+                        <div id="budget-bar-project" class="h-full bg-amber-500 transition-all duration-300" style="width:0%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-600">Used vs contract amount</span>
+                        <span class="font-semibold tabular-nums" id="budget-bar-contract-label">—</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden border">
+                        <div id="budget-bar-contract" class="h-full bg-slate-600 transition-all duration-300" style="width:0%"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -165,6 +212,70 @@
     <script>
         const STORAGE_KEY = 'isspb-km-checklist-v1';
 
+        const projectBudget = {
+            contractAmount: 4650000,
+            projectAmount: 6500000,
+            amountUsed: 2526503,
+            kickoffDate: '2026-02-03',
+            handoverDate: '2026-06-23'
+        };
+
+        function formatNu(n) {
+            return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function parseIsoDate(iso) {
+            const [y, m, d] = iso.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
+
+        function daysBetween(from, to) {
+            const ms = to - from;
+            return Math.round(ms / (1000 * 60 * 60 * 24));
+        }
+
+        function renderBudgetAndSchedule() {
+            const { contractAmount, projectAmount, amountUsed, kickoffDate, handoverDate } = projectBudget;
+            const balance = projectAmount - amountUsed;
+            const pctProject = Math.round((amountUsed / projectAmount) * 1000) / 10;
+            const pctContract = Math.round((amountUsed / contractAmount) * 1000) / 10;
+
+            document.getElementById('budget-contract').textContent = 'Nu. ' + formatNu(contractAmount);
+            document.getElementById('budget-project').textContent = 'Nu. ' + formatNu(projectAmount);
+            document.getElementById('budget-used').textContent = 'Nu. ' + formatNu(amountUsed);
+            document.getElementById('budget-balance').textContent = 'Nu. ' + formatNu(balance);
+            document.getElementById('budget-used-pct').textContent = pctProject + '%';
+            document.getElementById('budget-used-amount').textContent = 'Nu. ' + formatNu(amountUsed) + ' of ' + formatNu(projectAmount);
+            document.getElementById('budget-bar-project').style.width = Math.min(pctProject, 100) + '%';
+            document.getElementById('budget-bar-contract').style.width = Math.min(pctContract, 100) + '%';
+            document.getElementById('budget-bar-project-label').textContent = pctProject + '% (Nu. ' + formatNu(amountUsed) + ')';
+            document.getElementById('budget-bar-contract-label').textContent = pctContract + '% (Nu. ' + formatNu(amountUsed) + ')';
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const handover = parseIsoDate(handoverDate);
+            const kickoff = parseIsoDate(kickoffDate);
+            const daysLeft = daysBetween(today, handover);
+            const daysElapsed = daysBetween(kickoff, today);
+
+            const daysEl = document.getElementById('days-remaining');
+            if (daysLeft > 0) {
+                daysEl.textContent = String(daysLeft);
+                daysEl.className = 'font-bold text-slate-800 mt-1 text-2xl';
+            } else if (daysLeft === 0) {
+                daysEl.textContent = '0';
+                daysEl.className = 'font-bold text-amber-700 mt-1 text-2xl';
+            } else {
+                daysEl.textContent = Math.abs(daysLeft) + ' overdue';
+                daysEl.className = 'font-bold text-rose-700 mt-1 text-xl';
+            }
+
+            document.getElementById('elapsed-days').textContent =
+                daysElapsed >= 0
+                    ? daysElapsed + ' days since kickoff'
+                    : 'Kickoff not started';
+        }
+
         const paymentRows = [
             { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '23/03/2026', sort: '2026-03-23' },
             { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '20/03/2026', sort: '2026-03-20' },
@@ -172,10 +283,6 @@
             { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '07/04/2026', sort: '2026-04-07' },
             { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '21/06/2026', sort: '2026-06-21' }
         ];
-
-        function formatNu(n) {
-            return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
 
         function renderPayments() {
             const tbody = document.getElementById('payment-table-body');
@@ -460,6 +567,7 @@
         }
 
         window.onload = () => {
+            renderBudgetAndSchedule();
             renderPayments();
             renderChecklist();
             calculateProgress();
