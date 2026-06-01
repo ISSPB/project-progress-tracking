@@ -4,210 +4,748 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Integrated System — Project Progress</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;500;600&family=Labrada:opsz,wght@8..72,400;8..72,600;8..72,700&display=swap" rel="stylesheet">
     <style>
-        .timeline-track { position: relative; padding-left: 1.25rem; }
-        .timeline-track::before {
+        :root {
+            --bg-void: #0a0e12;
+            --bg-deep: #101820;
+            --bg-panel: #162028;
+            --bg-panel-hover: #1c2a34;
+            --bg-inset: #0d1318;
+            --text-primary: #ede6d9;
+            --text-secondary: #a8b4c0;
+            --text-dim: #6b7a88;
+            --accent-gold: #d4a24c;
+            --accent-gold-bright: #f0c56a;
+            --accent-crimson: #c45c5c;
+            --accent-pine: #4a9b88;
+            --accent-sky: #6b9eb8;
+            --border-subtle: rgba(212, 162, 76, 0.12);
+            --border-strong: rgba(212, 162, 76, 0.28);
+            --glow-gold: rgba(212, 162, 76, 0.22);
+            --font-display: 'Labrada', Georgia, serif;
+            --font-mono: 'Chivo Mono', ui-monospace, monospace;
+            --radius: 6px;
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.55;
+            color: var(--text-primary);
+            background: var(--bg-void);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Atmospheric layers */
+        .atmosphere {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 120% 80% at 10% -20%, rgba(196, 92, 92, 0.14) 0%, transparent 50%),
+                radial-gradient(ellipse 90% 60% at 95% 10%, rgba(74, 155, 136, 0.1) 0%, transparent 45%),
+                radial-gradient(ellipse 70% 50% at 50% 100%, rgba(212, 162, 76, 0.08) 0%, transparent 55%),
+                linear-gradient(168deg, var(--bg-void) 0%, var(--bg-deep) 45%, #0d151c 100%);
+        }
+
+        .atmosphere::before {
             content: '';
             position: absolute;
-            left: 0.4rem;
-            top: 0.5rem;
-            bottom: 0.5rem;
-            width: 2px;
-            background: #cbd5e1;
+            inset: 0;
+            opacity: 0.35;
+            background-image:
+                repeating-linear-gradient(
+                    -32deg,
+                    transparent,
+                    transparent 48px,
+                    rgba(212, 162, 76, 0.03) 48px,
+                    rgba(212, 162, 76, 0.03) 49px
+                );
         }
-        .timeline-item { position: relative; padding-bottom: 1.25rem; }
+
+        .atmosphere::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 1.25rem 4rem;
+        }
+
+        /* Page load choreography */
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes lineGrow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        @keyframes countPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        body:not(.loaded) .reveal {
+            opacity: 0;
+        }
+
+        body.loaded .reveal {
+            animation: riseIn 0.85s var(--ease-out) forwards;
+        }
+
+        body.loaded .reveal:nth-child(1) { animation-delay: 0.05s; }
+        body.loaded .reveal:nth-child(2) { animation-delay: 0.12s; }
+        body.loaded .reveal:nth-child(3) { animation-delay: 0.19s; }
+        body.loaded .reveal:nth-child(4) { animation-delay: 0.26s; }
+        body.loaded .reveal:nth-child(5) { animation-delay: 0.33s; }
+        body.loaded .reveal:nth-child(6) { animation-delay: 0.4s; }
+        body.loaded .reveal:nth-child(7) { animation-delay: 0.47s; }
+        body.loaded .reveal:nth-child(8) { animation-delay: 0.54s; }
+
+        body.loaded .header-rule {
+            animation: lineGrow 1.2s var(--ease-out) 0.2s forwards;
+            transform-origin: left;
+        }
+
+        /* Header */
+        .site-header {
+            padding: 2.5rem 0 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .site-header h1 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            color: var(--text-primary);
+        }
+
+        .site-header .meta {
+            margin-top: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .site-header .meta strong {
+            color: var(--accent-gold-bright);
+            font-weight: 600;
+        }
+
+        .header-rule {
+            display: block;
+            height: 3px;
+            width: 100%;
+            max-width: 180px;
+            margin-top: 1.25rem;
+            background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold), var(--accent-pine));
+            transform: scaleX(0);
+        }
+
+        /* Stat grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 2rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .stat-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.1rem 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, background 0.25s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            opacity: 0.5;
+        }
+
+        .stat-card:hover {
+            background: var(--bg-panel-hover);
+            border-color: var(--border-strong);
+        }
+
+        .stat-card--hero::before {
+            background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold));
+            opacity: 1;
+            height: 3px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-dim);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-gold-bright);
+            margin-top: 0.35rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-value--warn { color: var(--accent-gold); }
+        .stat-value--danger { color: var(--accent-crimson); font-size: 1.35rem; }
+
+        .stat-note {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 0.4rem;
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.65rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .panel-subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; margin: 0 -0.25rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--border-strong);
+            font-weight: 500;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        td.phase-num {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            width: 2.5rem;
+        }
+
+        .date-chip {
+            display: inline-block;
+            font-weight: 600;
+            color: var(--accent-gold-bright);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date-chip--final { color: var(--accent-pine); }
+
+        tr.highlight-row td { background: rgba(212, 162, 76, 0.06); }
+
+        /* Budget */
+        .budget-grid {
+            display: grid;
+            gap: 0.5rem;
+            max-width: 420px;
+            margin-bottom: 1.5rem;
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .budget-row:last-child {
+            border-bottom: none;
+            padding-top: 0.75rem;
+            margin-top: 0.25rem;
+            border-top: 1px solid var(--border-strong);
+        }
+
+        .budget-row dt { color: var(--text-dim); }
+        .budget-row dd {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-primary);
+        }
+
+        .budget-row--used dd { color: var(--accent-gold); }
+        .budget-row--balance dd { color: var(--accent-pine); font-size: 1.05rem; }
+
+        .meter {
+            margin-bottom: 1.1rem;
+        }
+
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 0.4rem;
+            color: var(--text-dim);
+        }
+
+        .meter-header span:last-child {
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .meter-track {
+            height: 8px;
+            background: var(--bg-inset);
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 1px;
+            width: 0;
+            transition: width 1.4s var(--ease-out);
+        }
+
+        .meter-fill--project {
+            background: linear-gradient(90deg, #8b6914, var(--accent-gold));
+            box-shadow: 0 0 20px var(--glow-gold);
+        }
+
+        .meter-fill--contract {
+            background: linear-gradient(90deg, var(--accent-crimson), #9a4a4a);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-pine), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.35rem;
+            opacity: 0;
+            animation: riseIn 0.6s var(--ease-out) forwards;
+        }
+
+        body.loaded .timeline-item:nth-child(1) { animation-delay: 0.6s; }
+        body.loaded .timeline-item:nth-child(2) { animation-delay: 0.68s; }
+        body.loaded .timeline-item:nth-child(3) { animation-delay: 0.76s; }
+        body.loaded .timeline-item:nth-child(4) { animation-delay: 0.84s; }
+        body.loaded .timeline-item:nth-child(5) { animation-delay: 0.92s; }
+
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -0.95rem;
+            left: -1.45rem;
             top: 0.35rem;
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            background: #f59e0b;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 1px #cbd5e1;
+            background: var(--bg-panel);
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 0 12px var(--glow-gold);
         }
-        .timeline-item.past::before { background: #64748b; }
-        .timeline-item.future::before { background: #3b82f6; }
+
+        .timeline-item.past::before {
+            border-color: var(--text-dim);
+            box-shadow: none;
+            background: var(--text-dim);
+        }
+
+        .timeline-item.future::before {
+            border-color: var(--accent-pine);
+            box-shadow: 0 0 12px rgba(74, 155, 136, 0.35);
+        }
+
+        .timeline-date {
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0.2rem 0;
+        }
+
+        .timeline-amount {
+            font-variant-numeric: tabular-nums;
+            color: var(--text-secondary);
+        }
+
+        /* Checklist */
+        .checklist-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .checklist-note {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .km-meter {
+            flex: 1;
+            min-width: 200px;
+            max-width: 280px;
+            height: 10px;
+            background: var(--bg-inset);
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+        }
+
+        .km-meter-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent-pine), #6bc4b0);
+            transition: width 0.5s var(--ease-out);
+        }
+
+        .km-meter-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            mix-blend-mode: difference;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 1rem;
+            background: var(--bg-inset);
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .accordion-trigger:hover { background: var(--bg-panel-hover); }
+
+        .accordion-trigger svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            transition: transform 0.3s var(--ease-out);
+            stroke: var(--accent-gold);
+        }
+
+        .accordion-trigger[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            overflow-x: auto;
+        }
+
+        .accordion-body.collapsed {
+            display: none;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.45rem;
+            border-radius: 2px;
+            border: 1px solid;
+        }
+
+        .badge--high {
+            color: #e8a0a0;
+            border-color: rgba(196, 92, 92, 0.5);
+            background: rgba(196, 92, 92, 0.12);
+        }
+
+        .badge--med {
+            color: var(--text-dim);
+            border-color: var(--border-subtle);
+            background: var(--bg-inset);
+        }
+
+        input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--accent-pine);
+            cursor: pointer;
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 2rem 0 0;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+<body>
+    <div class="atmosphere" aria-hidden="true"></div>
 
-    <header class="bg-slate-900 text-white border-b-4 border-amber-500">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <h1 class="text-lg font-bold">Integrated System — Project Progress</h1>
-            <p class="text-sm text-slate-300">Contract signing / kickoff: <span class="font-semibold text-white">03/02/2026</span></p>
-        </div>
-    </header>
+    <div class="shell">
+        <header class="site-header reveal">
+            <h1>Integrated System<br>Project Progress</h1>
+            <p class="meta">Contract kickoff <strong>03/02/2026</strong> · Handover <strong>23/06/2026</strong></p>
+            <span class="header-rule" aria-hidden="true"></span>
+        </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <section class="stat-grid" aria-label="Summary">
+            <article class="stat-card stat-card--hero reveal">
+                <p class="stat-label">Days until handover</p>
+                <p class="stat-value" id="days-remaining">—</p>
+                <p class="stat-note">Target <span id="handover-date-label">23/06/2026</span></p>
+            </article>
+            <article class="stat-card reveal">
+                <p class="stat-label">Contract period</p>
+                <p class="stat-value" style="font-size:1.1rem">20 wks</p>
+                <p class="stat-note" id="elapsed-days">—</p>
+            </article>
+            <article class="stat-card reveal">
+                <p class="stat-label">Budget used</p>
+                <p class="stat-value" id="budget-used-pct" style="font-size:1.75rem">—</p>
+                <p class="stat-note tabular-nums" id="budget-used-amount">—</p>
+            </article>
+            <article class="stat-card reveal">
+                <p class="stat-label">KM checklist</p>
+                <p class="stat-value" id="overall-progress-text" style="font-size:1.75rem">0%</p>
+                <p class="stat-note">GovTech DSO&amp;M</p>
+            </article>
+        </section>
 
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
-            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">Days until handover</p>
-                <p class="font-bold text-slate-800 mt-1 text-2xl" id="days-remaining">—</p>
-                <p class="text-gray-500 text-xs mt-1">Handover: <span id="handover-date-label">23/06/2026</span></p>
+        <section class="panel reveal" aria-labelledby="budget-title">
+            <h2 class="panel-title" id="budget-title">Budget utilization</h2>
+            <dl class="budget-grid">
+                <div class="budget-row"><dt>Contract amount</dt><dd id="budget-contract">—</dd></div>
+                <div class="budget-row"><dt>Project amount</dt><dd id="budget-project">—</dd></div>
+                <div class="budget-row budget-row--used"><dt>Amount used</dt><dd id="budget-used">—</dd></div>
+                <div class="budget-row budget-row--balance"><dt>Balance</dt><dd id="budget-balance">—</dd></div>
+            </dl>
+            <div class="meter">
+                <div class="meter-header"><span>Used vs project amount</span><span id="budget-bar-project-label">—</span></div>
+                <div class="meter-track"><div class="meter-fill meter-fill--project" id="budget-bar-project"></div></div>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">Contract period</p>
-                <p class="font-bold text-slate-800 mt-1">03/02/2026 – 23/06/2026</p>
-                <p class="text-gray-500 text-xs mt-1" id="elapsed-days">—</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">Project budget used</p>
-                <p class="font-bold text-slate-800 mt-1" id="budget-used-pct">—</p>
-                <p class="text-gray-500 text-xs mt-1 tabular-nums" id="budget-used-amount">—</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                <p class="text-gray-500 text-xs uppercase">KM checklist</p>
-                <p class="font-bold text-slate-800 mt-1" id="overall-progress-text">0%</p>
+            <div class="meter">
+                <div class="meter-header"><span>Used vs contract amount</span><span id="budget-bar-contract-label">—</span></div>
+                <div class="meter-track"><div class="meter-fill meter-fill--contract" id="budget-bar-contract"></div></div>
             </div>
         </section>
 
-        <section class="bg-white border border-gray-200 rounded-lg p-5">
-            <h2 class="font-bold text-slate-800 mb-4">Budget utilization</h2>
-            <div class="overflow-x-auto mb-5">
-                <table class="w-full text-sm border-collapse max-w-xl">
-                    <tbody class="divide-y divide-gray-100">
-                        <tr>
-                            <td class="py-2 pr-4 text-gray-600">Contract amount</td>
-                            <td class="py-2 font-semibold text-right tabular-nums" id="budget-contract">—</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 pr-4 text-gray-600">Project amount</td>
-                            <td class="py-2 font-semibold text-right tabular-nums" id="budget-project">—</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 pr-4 text-gray-600">Amount used</td>
-                            <td class="py-2 font-semibold text-right tabular-nums text-amber-800" id="budget-used">—</td>
-                        </tr>
-                        <tr class="bg-slate-50">
-                            <td class="py-2 pr-4 font-medium text-slate-800">Balance</td>
-                            <td class="py-2 font-bold text-right tabular-nums text-emerald-800" id="budget-balance">—</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="space-y-4 max-w-2xl">
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-gray-600">Used vs project amount</span>
-                        <span class="font-semibold tabular-nums" id="budget-bar-project-label">—</span>
-                    </div>
-                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden border">
-                        <div id="budget-bar-project" class="h-full bg-amber-500 transition-all duration-300" style="width:0%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-gray-600">Used vs contract amount</span>
-                        <span class="font-semibold tabular-nums" id="budget-bar-contract-label">—</span>
-                    </div>
-                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden border">
-                        <div id="budget-bar-contract" class="h-full bg-slate-600 transition-all duration-300" style="width:0%"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="bg-white border border-gray-200 rounded-lg p-5">
-            <h2 class="font-bold text-slate-800 mb-4">Contract milestone completion dates</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm border-collapse min-w-[640px]">
+        <section class="panel reveal" aria-labelledby="milestones-title">
+            <h2 class="panel-title" id="milestones-title">Milestone completion dates</h2>
+            <div class="table-wrap">
+                <table>
                     <thead>
-                        <tr class="bg-slate-50 border-b border-gray-200 text-xs uppercase text-gray-500">
-                            <th class="py-2 px-3 text-left">Phase</th>
-                            <th class="py-2 px-3 text-left">Deliverable</th>
-                            <th class="py-2 px-3 text-left">Due date</th>
-                            <th class="py-2 px-3 text-left">Payment %</th>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Deliverable</th>
+                            <th>Due</th>
+                            <th>Pay %</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody>
                         <tr>
-                            <td class="py-3 px-3 font-medium">1</td>
-                            <td class="py-3 px-3">Inception report, SRS, system architecture & design document</td>
-                            <td class="py-3 px-3 font-semibold text-amber-800">24/02/2026</td>
-                            <td class="py-3 px-3">20%</td>
+                            <td class="phase-num">1</td>
+                            <td>Inception report, SRS, system architecture &amp; design document</td>
+                            <td><span class="date-chip">24/02/2026</span></td>
+                            <td>20%</td>
                         </tr>
                         <tr>
-                            <td class="py-3 px-3 font-medium">2</td>
-                            <td class="py-3 px-3">Core modules (RBAC, MIS, building info, spatial plan, emergency shelter overlay, public portal)</td>
-                            <td class="py-3 px-3 font-semibold text-blue-800">26/05/2026</td>
-                            <td class="py-3 px-3">40%</td>
+                            <td class="phase-num">2</td>
+                            <td>Core modules — RBAC, MIS, building info, spatial plan, emergency shelter, public portal</td>
+                            <td><span class="date-chip">26/05/2026</span></td>
+                            <td>40%</td>
                         </tr>
                         <tr>
-                            <td class="py-3 px-3 font-medium">3</td>
-                            <td class="py-3 px-3">Deployment, configuration, operations, Zhichar data migration</td>
-                            <td class="py-3 px-3 font-semibold">02/06/2026</td>
-                            <td class="py-3 px-3">30%</td>
+                            <td class="phase-num">3</td>
+                            <td>Deployment, configuration, operations, Zhichar migration</td>
+                            <td><span class="date-chip">02/06/2026</span></td>
+                            <td>30%</td>
                         </tr>
                         <tr>
-                            <td class="py-3 px-3 font-medium">4</td>
-                            <td class="py-3 px-3">UAT completed</td>
-                            <td class="py-3 px-3 font-semibold">09/06/2026</td>
-                            <td class="py-3 px-3" rowspan="3">10%</td>
+                            <td class="phase-num">4</td>
+                            <td>UAT completed</td>
+                            <td><span class="date-chip">09/06/2026</span></td>
+                            <td rowspan="3">10%</td>
                         </tr>
                         <tr>
-                            <td class="py-3 px-3 font-medium">5</td>
-                            <td class="py-3 px-3">Admin guides, SRS updates, end-user manuals, video guides</td>
-                            <td class="py-3 px-3 font-semibold">16/06/2026</td>
+                            <td class="phase-num">5</td>
+                            <td>Admin guides, SRS updates, manuals, video guides</td>
+                            <td><span class="date-chip">16/06/2026</span></td>
                         </tr>
-                        <tr>
-                            <td class="py-3 px-3 font-medium">6</td>
-                            <td class="py-3 px-3">Administrator training & final report</td>
-                            <td class="py-3 px-3 font-semibold text-emerald-800">23/06/2026</td>
+                        <tr class="highlight-row">
+                            <td class="phase-num">6</td>
+                            <td>Administrator training &amp; final report</td>
+                            <td><span class="date-chip date-chip--final">23/06/2026</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section class="bg-white border border-gray-200 rounded-lg p-5">
-            <h2 class="font-bold text-slate-800 mb-4">Payment & expenditure timeline</h2>
-            <div class="overflow-x-auto mb-6">
-                <table class="w-full text-sm border-collapse min-w-[560px]">
+        <section class="panel reveal" aria-labelledby="payments-title">
+            <h2 class="panel-title" id="payments-title">Payments &amp; expenditure</h2>
+            <div class="table-wrap">
+                <table>
                     <thead>
-                        <tr class="bg-slate-50 border-b border-gray-200 text-xs uppercase text-gray-500">
-                            <th class="py-2 px-3 text-left w-12">#</th>
-                            <th class="py-2 px-3 text-left">Particular</th>
-                            <th class="py-2 px-3 text-right">Amount (Nu.)</th>
-                            <th class="py-2 px-3 text-left w-28">Date</th>
+                        <tr>
+                            <th>#</th>
+                            <th>Particular</th>
+                            <th class="num">Amount (Nu.)</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100" id="payment-table-body"></tbody>
+                    <tbody id="payment-table-body"></tbody>
                     <tfoot>
-                        <tr class="bg-slate-50 font-semibold border-t border-gray-200">
-                            <td class="py-3 px-3" colspan="2">Total (listed items)</td>
-                            <td class="py-3 px-3 text-right" id="payment-total">—</td>
-                            <td class="py-3 px-3"></td>
+                        <tr class="highlight-row">
+                            <td colspan="2"><strong>Total (listed)</strong></td>
+                            <td class="num" id="payment-total">—</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
-
-            <h3 class="text-sm font-semibold text-slate-700 mb-3">Chronological view</h3>
-            <div class="timeline-track" id="payment-timeline"></div>
+            <p class="panel-subtitle">Chronological</p>
+            <div class="timeline" id="payment-timeline"></div>
         </section>
 
-        <section class="bg-white border border-gray-200 rounded-lg p-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3 mb-4">
-                <h2 class="font-bold text-slate-800">GovTech KM process checklist (DSO&amp;M)</h2>
-                <div class="w-full sm:w-56 bg-gray-100 h-3 rounded-full overflow-hidden border relative">
-                    <div id="compliance-progress-bar" class="bg-indigo-600 h-full transition-all duration-300 w-0"></div>
-                    <span id="compliance-progress-label" class="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-slate-700">0%</span>
+        <section class="panel reveal" aria-labelledby="km-title">
+            <div class="checklist-header">
+                <h2 class="panel-title" id="km-title" style="margin:0;border:0;padding:0">GovTech KM checklist</h2>
+                <div class="km-meter">
+                    <div class="km-meter-fill" id="compliance-progress-bar"></div>
+                    <span class="km-meter-label" id="compliance-progress-label">0%</span>
                 </div>
             </div>
-            <p class="text-xs text-gray-500 mb-4">High-priority items must be complete before GovTech operational handover.</p>
-            <div id="checklist-accordion" class="space-y-3"></div>
+            <p class="checklist-note">High-priority items required before operational handover.</p>
+            <div id="checklist-accordion"></div>
         </section>
-    </main>
 
-    <footer class="border-t border-gray-200 py-4 text-center text-xs text-gray-500">
-        Integrated System contract progress tracker
-    </footer>
+        <footer class="site-footer reveal">ISSPB · Integrated System</footer>
+    </div>
 
     <script>
         const STORAGE_KEY = 'isspb-km-checklist-v1';
@@ -220,6 +758,14 @@
             handoverDate: '2026-06-23'
         };
 
+        const paymentRows = [
+            { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '23/03/2026', sort: '2026-03-23' },
+            { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '20/03/2026', sort: '2026-03-20' },
+            { num: 3, particular: 'Workshop at Paro — TADA / Mileage', amount: 87215.75, date: null, sort: '9999-12-31' },
+            { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '07/04/2026', sort: '2026-04-07' },
+            { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '21/06/2026', sort: '2026-06-21' }
+        ];
+
         function formatNu(n) {
             return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
@@ -230,8 +776,22 @@
         }
 
         function daysBetween(from, to) {
-            const ms = to - from;
-            return Math.round(ms / (1000 * 60 * 60 * 24));
+            return Math.round((to - from) / (1000 * 60 * 60 * 24));
+        }
+
+        function setDaysRemaining(daysLeft) {
+            const el = document.getElementById('days-remaining');
+            el.className = 'stat-value';
+            if (daysLeft > 0) {
+                el.textContent = String(daysLeft);
+                el.style.animation = 'countPulse 3s ease-in-out infinite';
+            } else if (daysLeft === 0) {
+                el.textContent = '0';
+                el.classList.add('stat-value--warn');
+            } else {
+                el.textContent = Math.abs(daysLeft) + 'd late';
+                el.classList.add('stat-value--danger');
+            }
         }
 
         function renderBudgetAndSchedule() {
@@ -245,44 +805,27 @@
             document.getElementById('budget-used').textContent = 'Nu. ' + formatNu(amountUsed);
             document.getElementById('budget-balance').textContent = 'Nu. ' + formatNu(balance);
             document.getElementById('budget-used-pct').textContent = pctProject + '%';
-            document.getElementById('budget-used-amount').textContent = 'Nu. ' + formatNu(amountUsed) + ' of ' + formatNu(projectAmount);
-            document.getElementById('budget-bar-project').style.width = Math.min(pctProject, 100) + '%';
-            document.getElementById('budget-bar-contract').style.width = Math.min(pctContract, 100) + '%';
-            document.getElementById('budget-bar-project-label').textContent = pctProject + '% (Nu. ' + formatNu(amountUsed) + ')';
-            document.getElementById('budget-bar-contract-label').textContent = pctContract + '% (Nu. ' + formatNu(amountUsed) + ')';
+            document.getElementById('budget-used-amount').textContent = 'Nu. ' + formatNu(amountUsed) + ' / ' + formatNu(projectAmount);
+            document.getElementById('budget-bar-project-label').textContent = pctProject + '%';
+            document.getElementById('budget-bar-contract-label').textContent = pctContract + '%';
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('budget-bar-project').style.width = Math.min(pctProject, 100) + '%';
+                    document.getElementById('budget-bar-contract').style.width = Math.min(pctContract, 100) + '%';
+                }, 400);
+            });
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const handover = parseIsoDate(handoverDate);
             const kickoff = parseIsoDate(kickoffDate);
-            const daysLeft = daysBetween(today, handover);
-            const daysElapsed = daysBetween(kickoff, today);
-
-            const daysEl = document.getElementById('days-remaining');
-            if (daysLeft > 0) {
-                daysEl.textContent = String(daysLeft);
-                daysEl.className = 'font-bold text-slate-800 mt-1 text-2xl';
-            } else if (daysLeft === 0) {
-                daysEl.textContent = '0';
-                daysEl.className = 'font-bold text-amber-700 mt-1 text-2xl';
-            } else {
-                daysEl.textContent = Math.abs(daysLeft) + ' overdue';
-                daysEl.className = 'font-bold text-rose-700 mt-1 text-xl';
-            }
-
+            setDaysRemaining(daysBetween(today, handover));
             document.getElementById('elapsed-days').textContent =
-                daysElapsed >= 0
-                    ? daysElapsed + ' days since kickoff'
-                    : 'Kickoff not started';
+                daysBetween(kickoff, today) >= 0
+                    ? daysBetween(kickoff, today) + ' days elapsed'
+                    : 'Pre-kickoff';
         }
-
-        const paymentRows = [
-            { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '23/03/2026', sort: '2026-03-23' },
-            { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '20/03/2026', sort: '2026-03-20' },
-            { num: 3, particular: 'Workshop at Paro — TADA / Mileage', amount: 87215.75, date: null, sort: '9999-12-31' },
-            { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '07/04/2026', sort: '2026-04-07' },
-            { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '21/06/2026', sort: '2026-06-21' }
-        ];
 
         function renderPayments() {
             const tbody = document.getElementById('payment-table-body');
@@ -291,14 +834,12 @@
 
             paymentRows.forEach(row => {
                 total += row.amount;
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="py-3 px-3">${row.num}</td>
-                        <td class="py-3 px-3">${row.particular}</td>
-                        <td class="py-3 px-3 text-right tabular-nums">${formatNu(row.amount)}</td>
-                        <td class="py-3 px-3">${row.date || '—'}</td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr>
+                    <td>${row.num}</td>
+                    <td>${row.particular}</td>
+                    <td class="num">${formatNu(row.amount)}</td>
+                    <td>${row.date || '—'}</td>
+                </tr>`;
             });
             document.getElementById('payment-total').textContent = formatNu(total);
 
@@ -310,175 +851,141 @@
                 let cls = '';
                 if (row.date) {
                     const [d, m, y] = row.date.split('/').map(Number);
-                    const itemDate = new Date(y, m - 1, d);
-                    cls = itemDate < today ? 'past' : 'future';
+                    cls = new Date(y, m - 1, d) < today ? 'past' : 'future';
                 }
-                timeline.innerHTML += `
-                    <div class="timeline-item ${cls}">
-                        <p class="text-xs text-gray-500">${row.date || 'Date TBD'}</p>
-                        <p class="font-medium text-slate-800 text-sm">${row.particular}</p>
-                        <p class="text-sm text-slate-600 tabular-nums">Nu. ${formatNu(row.amount)}</p>
-                    </div>
-                `;
+                timeline.innerHTML += `<div class="timeline-item ${cls}">
+                    <p class="timeline-date">${row.date || 'Date TBD'}</p>
+                    <p class="timeline-title">${row.particular}</p>
+                    <p class="timeline-amount">Nu. ${formatNu(row.amount)}</p>
+                </div>`;
             });
         }
 
         const checklistData = [
-            {
-                category: "1. Documentation Requirements",
-                items: [
-                    { id: "1.1", text: "Software Requirement Specification (SRS) with detailed UI/UX wireframe", priority: "High" },
-                    { id: "1.2", text: "Functional and non-functional requirements documented", priority: "High" },
-                    { id: "1.3", text: "Software user manual available and up-to-date", priority: "High" },
-                    { id: "1.4", text: "Business process flow diagram", priority: "High" },
-                    { id: "1.5", text: "Software/package versions documented", priority: "High" },
-                    { id: "1.6", text: "Technology stacks documented", priority: "High" },
-                    { id: "1.7", text: "Database designs documented", priority: "High" },
-                    { id: "1.8", text: "Hosting details documented", priority: "High" },
-                    { id: "1.9", text: "Deployment documentation", priority: "High" },
-                    { id: "1.10", text: "BRD/FRS validated and signed off", priority: "High" },
-                    { id: "1.11", text: "System architecture document up-to-date", priority: "High" }
-                ]
-            },
-            {
-                category: "2. Source Code & Version Control",
-                items: [
-                    { id: "2.1", text: "Latest and updated source code maintained in GIT", priority: "High" },
-                    { id: "2.2", text: "Source code verified by deploying in production", priority: "High" },
-                    { id: "2.3", text: "Code complies with standards (meaningful naming, commenting, modularity)", priority: "High" },
-                    { id: "2.4", text: "DRY principle followed (no code duplication)", priority: "High" },
-                    { id: "2.5", text: "Proper formatting and indentation", priority: "Medium" },
-                    { id: "2.6", text: "Error handling implemented", priority: "High" },
-                    { id: "2.7", text: "Code optimized (no unnecessary code/loops)", priority: "Medium" },
-                    { id: "2.8", text: "Proper logging implemented", priority: "High" },
-                    { id: "2.9", text: "Input validation implemented", priority: "High" },
-                    { id: "2.10", text: "Secure coding practices followed", priority: "High" },
-                    { id: "2.11", text: "No hard coding practices", priority: "High" },
-                    { id: "2.12", text: "Version control properly implemented", priority: "High" },
-                    { id: "2.13", text: "Software versioning follows Major.Minor.Patch format", priority: "Medium" },
-                    { id: "2.14", text: "Main/master branch is current and issue-free", priority: "High" }
-                ]
-            },
-            {
-                category: "3. System Documentation & Configuration",
-                items: [
-                    { id: "3.1", text: "Deployment steps with minimum services list", priority: "High" },
-                    { id: "3.2", text: "Server configuration steps documented", priority: "High" },
-                    { id: "3.3", text: "Backup configuration steps (application & database)", priority: "High" },
-                    { id: "3.4", text: "UML diagrams or table structure available", priority: "High" },
-                    { id: "3.5", text: "Data dictionary for database", priority: "High" },
-                    { id: "3.6", text: "Configuration files for iOS and Android apps", priority: "Medium" },
-                    { id: "3.7", text: "Pre and post-configuration files available", priority: "High" },
-                    { id: "3.8", text: "Backup configuration files available", priority: "High" },
-                    { id: "3.9", text: "Server timezone configured and verified", priority: "High" },
-                    { id: "3.10", text: "Time zone configurable for all systems and databases", priority: "Medium" }
-                ]
-            },
-            {
-                category: "4. User Support & Testing",
-                items: [
-                    { id: "4.1", text: "User Acceptance Testing (UAT) guidelines included", priority: "High" },
-                    { id: "4.2", text: "Bug resolution document with fixed bugs details", priority: "High" },
-                    { id: "4.3", text: "Frequently asked questions from business users", priority: "Medium" },
-                    { id: "4.4", text: "Basic troubleshooting guide available", priority: "High" },
-                    { id: "4.5", text: "Unit tests implemented and passing", priority: "High" },
-                    { id: "4.6", text: "Integration tests implemented and passing", priority: "High" },
-                    { id: "4.7", text: "System tests implemented and passing", priority: "High" },
-                    { id: "4.8", text: "UAT completed with joint effort (vendor/developer, product owner, business analyst)", priority: "Medium" },
-                    { id: "4.9", text: "Product owner UAT acceptance obtained", priority: "Medium" }
-                ]
-            },
-            {
-                category: "5. Dependencies & Integration",
-                items: [
-                    { id: "5.1", text: "API integration via WoGs listed", priority: "High" },
-                    { id: "5.2", text: "Internal system dependencies documented", priority: "High" },
-                    { id: "5.3", text: "Integration types specified", priority: "High" },
-                    { id: "5.4", text: "All dependencies verified and functional", priority: "High" }
-                ]
-            },
-            {
-                category: "6. Feedback & User Interface",
-                items: [
-                    { id: "6.1", text: "Feedback feature implemented for citizen/government/public services", priority: "Medium" },
-                    { id: "6.2", text: "User can provide feedback while availing service", priority: "Medium" },
-                    { id: "6.3", text: "User can provide review after service completion", priority: "Medium" },
-                    { id: "6.4", text: "UI/UX is responsive on all devices", priority: "High" }
-                ]
-            },
-            {
-                category: "7. Access Control & Security",
-                items: [
-                    { id: "7.1", text: "Current user list reviewed and updated", priority: "High" },
-                    { id: "7.2", text: "New users added as needed", priority: "High" },
-                    { id: "7.3", text: "Obsolete users removed", priority: "High" },
-                    { id: "7.4", text: "Vendor access to production infrastructure removed", priority: "High" },
-                    { id: "7.5", text: "No superuser credentials used in system", priority: "High" },
-                    { id: "7.6", text: "Security scanning/penetration test completed", priority: "Medium" },
-                    { id: "7.7", text: "Audit logging implemented and verified", priority: "High" },
-                    { id: "7.8", text: "Firewall configured and rules documented", priority: "High" },
-                    { id: "7.9", text: "Firewall list shared with DSO&M", priority: "High" }
-                ]
-            },
-            {
-                category: "8. Performance & Operations",
-                items: [
-                    { id: "8.1", text: "System meets minimum 5000 TPS benchmark", priority: "High" },
-                    { id: "8.2", text: "System responds within 30 seconds for any request", priority: "High" },
-                    { id: "8.3", text: "Backup schedule configured and verified", priority: "High" },
-                    { id: "8.4", text: "Full and incremental backup schedule in place", priority: "High" },
-                    { id: "8.5", text: "Backed up database tested for recovery", priority: "High" },
-                    { id: "8.6", text: "Monitoring tools configured and registered", priority: "High" },
-                    { id: "8.7", text: "Emergency contact focal list verified", priority: "High" }
-                ]
-            },
-            {
-                category: "9. DevOps & Deployment",
-                items: [
-                    { id: "9.1", text: "Software compatible with containerization", priority: "Medium" },
-                    { id: "9.2", text: "CI/CD pipelines in place for staging/UAT/Production", priority: "Medium" },
-                    { id: "9.3", text: "Deployment and rollback documents available", priority: "High" },
-                    { id: "9.4", text: "Vendor can deploy to UAT after passing tests", priority: "Medium" },
-                    { id: "9.5", text: "Technology/software using latest long-term support versions", priority: "Medium" },
-                    { id: "9.6", text: "All packages/libraries free from security vulnerabilities", priority: "High" },
-                    { id: "9.7", text: "No technology/software end of support within 5 years", priority: "Medium" }
-                ]
-            },
-            {
-                category: "10. Compliance & Standards",
-                items: [
-                    { id: "10.1", text: "Complies with Software Delivery Standards", priority: "High" },
-                    { id: "10.2", text: "Exception documented for existing/old systems", priority: "Medium" },
-                    { id: "10.3", text: "Complies with other DSO&M standards", priority: "High" },
-                    { id: "10.4", text: "Development team sign-off obtained", priority: "Medium" },
-                    { id: "10.5", text: "QA team sign-off obtained", priority: "Medium" },
-                    { id: "10.6", text: "Business owner sign-off obtained", priority: "Medium" }
-                ]
-            },
-            {
-                category: "11. Service Catalog Information",
-                items: [
-                    { id: "11.1", text: "Application Type documented", priority: "High" },
-                    { id: "11.2", text: "Description (Application/System/APP)", priority: "High" },
-                    { id: "11.3", text: "System URL documented", priority: "High" },
-                    { id: "11.4", text: "System Owner identified", priority: "High" },
-                    { id: "11.5", text: "System Status documented", priority: "High" },
-                    { id: "11.6", text: "Platform information", priority: "High" },
-                    { id: "11.7", text: "System hosting location", priority: "High" },
-                    { id: "11.8", text: "Domain Focal assigned", priority: "High" },
-                    { id: "11.9", text: "Contact Number & Email ID of Focals", priority: "High" },
-                    { id: "11.10", text: "AMC status and expiry date", priority: "High" },
-                    { id: "11.11", text: "Vendor information", priority: "High" },
-                    { id: "11.12", text: "Documentation status verified", priority: "High" },
-                    { id: "11.13", text: "Source code availability confirmed", priority: "High" },
-                    { id: "11.14", text: "System criticality assessed", priority: "High" },
-                    { id: "11.15", text: "Existing IT Focal identified", priority: "High" },
-                    { id: "11.16", text: "GovTech DSO&M Focal assigned", priority: "High" },
-                    { id: "11.17", text: "SSL Issuance Date documented", priority: "Medium" },
-                    { id: "11.18", text: "SSL Expiry Date documented", priority: "Medium" }
-                ]
-            }
+            { category: "1. Documentation Requirements", items: [
+                { id: "1.1", text: "Software Requirement Specification (SRS) with detailed UI/UX wireframe", priority: "High" },
+                { id: "1.2", text: "Functional and non-functional requirements documented", priority: "High" },
+                { id: "1.3", text: "Software user manual available and up-to-date", priority: "High" },
+                { id: "1.4", text: "Business process flow diagram", priority: "High" },
+                { id: "1.5", text: "Software/package versions documented", priority: "High" },
+                { id: "1.6", text: "Technology stacks documented", priority: "High" },
+                { id: "1.7", text: "Database designs documented", priority: "High" },
+                { id: "1.8", text: "Hosting details documented", priority: "High" },
+                { id: "1.9", text: "Deployment documentation", priority: "High" },
+                { id: "1.10", text: "BRD/FRS validated and signed off", priority: "High" },
+                { id: "1.11", text: "System architecture document up-to-date", priority: "High" }
+            ]},
+            { category: "2. Source Code & Version Control", items: [
+                { id: "2.1", text: "Latest and updated source code maintained in GIT", priority: "High" },
+                { id: "2.2", text: "Source code verified by deploying in production", priority: "High" },
+                { id: "2.3", text: "Code complies with standards (meaningful naming, commenting, modularity)", priority: "High" },
+                { id: "2.4", text: "DRY principle followed (no code duplication)", priority: "High" },
+                { id: "2.5", text: "Proper formatting and indentation", priority: "Medium" },
+                { id: "2.6", text: "Error handling implemented", priority: "High" },
+                { id: "2.7", text: "Code optimized (no unnecessary code/loops)", priority: "Medium" },
+                { id: "2.8", text: "Proper logging implemented", priority: "High" },
+                { id: "2.9", text: "Input validation implemented", priority: "High" },
+                { id: "2.10", text: "Secure coding practices followed", priority: "High" },
+                { id: "2.11", text: "No hard coding practices", priority: "High" },
+                { id: "2.12", text: "Version control properly implemented", priority: "High" },
+                { id: "2.13", text: "Software versioning follows Major.Minor.Patch format", priority: "Medium" },
+                { id: "2.14", text: "Main/master branch is current and issue-free", priority: "High" }
+            ]},
+            { category: "3. System Documentation & Configuration", items: [
+                { id: "3.1", text: "Deployment steps with minimum services list", priority: "High" },
+                { id: "3.2", text: "Server configuration steps documented", priority: "High" },
+                { id: "3.3", text: "Backup configuration steps (application & database)", priority: "High" },
+                { id: "3.4", text: "UML diagrams or table structure available", priority: "High" },
+                { id: "3.5", text: "Data dictionary for database", priority: "High" },
+                { id: "3.6", text: "Configuration files for iOS and Android apps", priority: "Medium" },
+                { id: "3.7", text: "Pre and post-configuration files available", priority: "High" },
+                { id: "3.8", text: "Backup configuration files available", priority: "High" },
+                { id: "3.9", text: "Server timezone configured and verified", priority: "High" },
+                { id: "3.10", text: "Time zone configurable for all systems and databases", priority: "Medium" }
+            ]},
+            { category: "4. User Support & Testing", items: [
+                { id: "4.1", text: "User Acceptance Testing (UAT) guidelines included", priority: "High" },
+                { id: "4.2", text: "Bug resolution document with fixed bugs details", priority: "High" },
+                { id: "4.3", text: "Frequently asked questions from business users", priority: "Medium" },
+                { id: "4.4", text: "Basic troubleshooting guide available", priority: "High" },
+                { id: "4.5", text: "Unit tests implemented and passing", priority: "High" },
+                { id: "4.6", text: "Integration tests implemented and passing", priority: "High" },
+                { id: "4.7", text: "System tests implemented and passing", priority: "High" },
+                { id: "4.8", text: "UAT completed with joint effort (vendor/developer, product owner, business analyst)", priority: "Medium" },
+                { id: "4.9", text: "Product owner UAT acceptance obtained", priority: "Medium" }
+            ]},
+            { category: "5. Dependencies & Integration", items: [
+                { id: "5.1", text: "API integration via WoGs listed", priority: "High" },
+                { id: "5.2", text: "Internal system dependencies documented", priority: "High" },
+                { id: "5.3", text: "Integration types specified", priority: "High" },
+                { id: "5.4", text: "All dependencies verified and functional", priority: "High" }
+            ]},
+            { category: "6. Feedback & User Interface", items: [
+                { id: "6.1", text: "Feedback feature implemented for citizen/government/public services", priority: "Medium" },
+                { id: "6.2", text: "User can provide feedback while availing service", priority: "Medium" },
+                { id: "6.3", text: "User can provide review after service completion", priority: "Medium" },
+                { id: "6.4", text: "UI/UX is responsive on all devices", priority: "High" }
+            ]},
+            { category: "7. Access Control & Security", items: [
+                { id: "7.1", text: "Current user list reviewed and updated", priority: "High" },
+                { id: "7.2", text: "New users added as needed", priority: "High" },
+                { id: "7.3", text: "Obsolete users removed", priority: "High" },
+                { id: "7.4", text: "Vendor access to production infrastructure removed", priority: "High" },
+                { id: "7.5", text: "No superuser credentials used in system", priority: "High" },
+                { id: "7.6", text: "Security scanning/penetration test completed", priority: "Medium" },
+                { id: "7.7", text: "Audit logging implemented and verified", priority: "High" },
+                { id: "7.8", text: "Firewall configured and rules documented", priority: "High" },
+                { id: "7.9", text: "Firewall list shared with DSO&M", priority: "High" }
+            ]},
+            { category: "8. Performance & Operations", items: [
+                { id: "8.1", text: "System meets minimum 5000 TPS benchmark", priority: "High" },
+                { id: "8.2", text: "System responds within 30 seconds for any request", priority: "High" },
+                { id: "8.3", text: "Backup schedule configured and verified", priority: "High" },
+                { id: "8.4", text: "Full and incremental backup schedule in place", priority: "High" },
+                { id: "8.5", text: "Backed up database tested for recovery", priority: "High" },
+                { id: "8.6", text: "Monitoring tools configured and registered", priority: "High" },
+                { id: "8.7", text: "Emergency contact focal list verified", priority: "High" }
+            ]},
+            { category: "9. DevOps & Deployment", items: [
+                { id: "9.1", text: "Software compatible with containerization", priority: "Medium" },
+                { id: "9.2", text: "CI/CD pipelines in place for staging/UAT/Production", priority: "Medium" },
+                { id: "9.3", text: "Deployment and rollback documents available", priority: "High" },
+                { id: "9.4", text: "Vendor can deploy to UAT after passing tests", priority: "Medium" },
+                { id: "9.5", text: "Technology/software using latest long-term support versions", priority: "Medium" },
+                { id: "9.6", text: "All packages/libraries free from security vulnerabilities", priority: "High" },
+                { id: "9.7", text: "No technology/software end of support within 5 years", priority: "Medium" }
+            ]},
+            { category: "10. Compliance & Standards", items: [
+                { id: "10.1", text: "Complies with Software Delivery Standards", priority: "High" },
+                { id: "10.2", text: "Exception documented for existing/old systems", priority: "Medium" },
+                { id: "10.3", text: "Complies with other DSO&M standards", priority: "High" },
+                { id: "10.4", text: "Development team sign-off obtained", priority: "Medium" },
+                { id: "10.5", text: "QA team sign-off obtained", priority: "Medium" },
+                { id: "10.6", text: "Business owner sign-off obtained", priority: "Medium" }
+            ]},
+            { category: "11. Service Catalog Information", items: [
+                { id: "11.1", text: "Application Type documented", priority: "High" },
+                { id: "11.2", text: "Description (Application/System/APP)", priority: "High" },
+                { id: "11.3", text: "System URL documented", priority: "High" },
+                { id: "11.4", text: "System Owner identified", priority: "High" },
+                { id: "11.5", text: "System Status documented", priority: "High" },
+                { id: "11.6", text: "Platform information", priority: "High" },
+                { id: "11.7", text: "System hosting location", priority: "High" },
+                { id: "11.8", text: "Domain Focal assigned", priority: "High" },
+                { id: "11.9", text: "Contact Number & Email ID of Focals", priority: "High" },
+                { id: "11.10", text: "AMC status and expiry date", priority: "High" },
+                { id: "11.11", text: "Vendor information", priority: "High" },
+                { id: "11.12", text: "Documentation status verified", priority: "High" },
+                { id: "11.13", text: "Source code availability confirmed", priority: "High" },
+                { id: "11.14", text: "System criticality assessed", priority: "High" },
+                { id: "11.15", text: "Existing IT Focal identified", priority: "High" },
+                { id: "11.16", text: "GovTech DSO&M Focal assigned", priority: "High" },
+                { id: "11.17", text: "SSL Issuance Date documented", priority: "Medium" },
+                { id: "11.18", text: "SSL Expiry Date documented", priority: "Medium" }
+            ]}
         ];
+
+        const chevronSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
 
         function loadCheckedState() {
             try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
@@ -489,63 +996,47 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         }
 
+        function toggleSection(btn, panelId) {
+            const panel = document.getElementById(panelId);
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!expanded));
+            panel.classList.toggle('collapsed', expanded);
+        }
+
         function renderChecklist() {
             const container = document.getElementById('checklist-accordion');
             const saved = loadCheckedState();
             container.innerHTML = '';
 
             checklistData.forEach((section, sIdx) => {
-                const sectionEl = document.createElement('div');
-                sectionEl.className = 'border border-gray-200 rounded-lg overflow-hidden';
-
+                const panelId = 'sec-' + sIdx;
                 const rowsHtml = section.items.map(item => {
-                    const badgeClass = item.priority === 'High'
-                        ? 'bg-rose-50 text-rose-700 border-rose-200'
-                        : 'bg-slate-100 text-slate-600 border-slate-200';
+                    const badge = item.priority === 'High' ? 'badge--high' : 'badge--med';
                     const checked = saved[item.id] ? 'checked' : '';
-
-                    return `
-                        <tr class="hover:bg-slate-50/50">
-                            <td class="py-2 px-3 w-12 text-gray-400 font-mono text-xs">${item.id}</td>
-                            <td class="py-2 px-3 text-slate-700">${item.text}</td>
-                            <td class="py-2 px-3 w-20"><span class="px-1.5 py-0.5 text-[10px] font-semibold rounded border ${badgeClass}">${item.priority}</span></td>
-                            <td class="py-2 px-3 w-16 text-center">
-                                <input type="checkbox" data-item-id="${item.id}" onchange="onChecklistChange(this)" class="w-4 h-4 accent-indigo-600 cursor-pointer" ${checked}>
-                            </td>
-                        </tr>
-                    `;
+                    return `<tr>
+                        <td style="color:var(--text-dim);font-size:11px">${item.id}</td>
+                        <td>${item.text}</td>
+                        <td><span class="badge ${badge}">${item.priority}</span></td>
+                        <td style="text-align:center"><input type="checkbox" data-item-id="${item.id}" onchange="onChecklistChange(this)" ${checked}></td>
+                    </tr>`;
                 }).join('');
 
-                sectionEl.innerHTML = `
-                    <button type="button" class="w-full bg-slate-800 text-white px-4 py-3 flex justify-between items-center text-left text-sm font-semibold" onclick="toggleSection('sec-${sIdx}')">
-                        <span>${section.category}</span>
-                        <i data-lucide="chevron-down" id="icon-sec-${sIdx}" class="w-4 h-4"></i>
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+                item.innerHTML = `
+                    <button type="button" class="accordion-trigger" aria-expanded="true" onclick="toggleSection(this,'${panelId}')">
+                        <span>${section.category}</span>${chevronSvg}
                     </button>
-                    <div id="sec-${sIdx}" class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 border-b text-[10px] uppercase text-gray-400">
-                                    <th class="py-2 px-3">ID</th>
-                                    <th class="py-2 px-3">Requirement</th>
-                                    <th class="py-2 px-3">Priority</th>
-                                    <th class="py-2 px-3 text-center">Done</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">${rowsHtml}</tbody>
+                    <div id="${panelId}" class="accordion-body">
+                        <table>
+                            <thead><tr>
+                                <th>ID</th><th>Requirement</th><th>Priority</th><th style="text-align:center">Done</th>
+                            </tr></thead>
+                            <tbody>${rowsHtml}</tbody>
                         </table>
-                    </div>
-                `;
-                container.appendChild(sectionEl);
+                    </div>`;
+                container.appendChild(item);
             });
-            lucide.createIcons();
-        }
-
-        function toggleSection(id) {
-            const el = document.getElementById(id);
-            const icon = document.getElementById('icon-' + id);
-            if (!el || !icon) return;
-            el.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
         }
 
         function onChecklistChange(checkbox) {
@@ -556,14 +1047,14 @@
         }
 
         function calculateProgress() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-item-id]');
+            const checkboxes = document.querySelectorAll('input[data-item-id]');
             const total = checkboxes.length;
-            let checkedCount = 0;
-            checkboxes.forEach(chk => { if (chk.checked) checkedCount++; });
-            const percent = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
-            document.getElementById('compliance-progress-bar').style.width = percent + '%';
-            document.getElementById('compliance-progress-label').innerText = percent + '% (' + checkedCount + '/' + total + ')';
-            document.getElementById('overall-progress-text').innerText = percent + '%';
+            let n = 0;
+            checkboxes.forEach(c => { if (c.checked) n++; });
+            const pct = total ? Math.round((n / total) * 100) : 0;
+            document.getElementById('compliance-progress-bar').style.width = pct + '%';
+            document.getElementById('compliance-progress-label').textContent = pct + '% (' + n + '/' + total + ')';
+            document.getElementById('overall-progress-text').textContent = pct + '%';
         }
 
         window.onload = () => {
@@ -571,6 +1062,7 @@
             renderPayments();
             renderChecklist();
             calculateProgress();
+            requestAnimationFrame(() => document.body.classList.add('loaded'));
         };
     </script>
 </body>
