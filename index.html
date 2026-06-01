@@ -6,31 +6,24 @@
     <title>Integrated System — Project Progress</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-void: #0a0e12;
-            --bg-deep: #101820;
-            --bg-panel: #162028;
-            --bg-panel-hover: #1c2a34;
-            --bg-inset: #0d1318;
-            --text-primary: #f2ebe3;
-            --text-secondary: #b8c5d1;
-            --text-dim: #7d8d9c;
-            --accent-gold: #d4a24c;
-            --accent-gold-bright: #f0c56a;
-            --accent-crimson: #c45c5c;
-            --accent-pine: #4a9b88;
-            --border-subtle: rgba(212, 162, 76, 0.12);
-            --border-strong: rgba(212, 162, 76, 0.28);
-            --glow-gold: rgba(212, 162, 76, 0.22);
-            --font-body: 'Source Sans 3', system-ui, sans-serif;
-            --font-display: 'Source Serif 4', Georgia, serif;
-            --text-base: 1.0625rem;
-            --text-lg: 1.1875rem;
-            --text-xl: 1.375rem;
-            --radius: 8px;
-            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --bg-page: #f0f2f5;
+            --bg-surface: #ffffff;
+            --bg-muted: #f8f9fa;
+            --text: #1a1a1a;
+            --text-secondary: #4a5568;
+            --text-muted: #6b7280;
+            --border: #dde1e6;
+            --border-strong: #c5cad1;
+            --accent: #1d4ed8;
+            --accent-hover: #1e40af;
+            --danger: #b91c1c;
+            --warn: #b45309;
+            --font: 'Source Sans 3', system-ui, sans-serif;
+            --radius: 4px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,591 +31,339 @@
         html { scroll-behavior: smooth; }
 
         body {
-            font-family: var(--font-body);
-            font-size: var(--text-base);
-            font-weight: 400;
-            line-height: 1.65;
-            color: var(--text-primary);
-            background: var(--bg-void);
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: var(--font);
+            font-size: 17px;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg-page);
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Atmospheric layers */
-        .atmosphere {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse 120% 80% at 10% -20%, rgba(196, 92, 92, 0.14) 0%, transparent 50%),
-                radial-gradient(ellipse 90% 60% at 95% 10%, rgba(74, 155, 136, 0.1) 0%, transparent 45%),
-                radial-gradient(ellipse 70% 50% at 50% 100%, rgba(212, 162, 76, 0.08) 0%, transparent 55%),
-                linear-gradient(168deg, var(--bg-void) 0%, var(--bg-deep) 45%, #0d151c 100%);
-        }
-
-        .atmosphere::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.35;
-            background-image:
-                repeating-linear-gradient(
-                    -32deg,
-                    transparent,
-                    transparent 48px,
-                    rgba(212, 162, 76, 0.03) 48px,
-                    rgba(212, 162, 76, 0.03) 49px
-                );
-        }
-
-        .atmosphere::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-
         .shell {
-            position: relative;
-            z-index: 1;
-            max-width: 1180px;
+            max-width: 1140px;
             margin: 0 auto;
-            padding: 0 1.5rem 4rem;
+            padding: 0 1.5rem 3rem;
         }
 
-        /* Page navigation */
-        .page-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            padding: 1rem 0 1.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 0.5rem;
+        /* —— Hero: overview + budget —— */
+        .hero {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 1.5rem;
+            overflow: hidden;
         }
 
-        .page-nav a {
-            font-size: var(--text-base);
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-decoration: none;
-            padding: 0.35rem 0;
-            border-bottom: 2px solid transparent;
-            transition: color 0.2s, border-color 0.2s;
-        }
-
-        .page-nav a:hover,
-        .page-nav a:focus {
-            color: var(--accent-gold-bright);
-            border-bottom-color: var(--accent-gold);
-        }
-
-        /* Major sections */
-        .section-block {
-            margin-bottom: 2.5rem;
-        }
-
-        .section-heading {
-            font-family: var(--font-display);
-            font-size: clamp(1.35rem, 3vw, 1.65rem);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.35rem;
-            line-height: 1.3;
-        }
-
-        .section-desc {
-            font-size: var(--text-base);
-            color: var(--text-dim);
-            margin-bottom: 1.25rem;
-            max-width: 52ch;
-        }
-
-        .subsection-title {
-            font-family: var(--font-display);
-            font-size: var(--text-xl);
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .two-col {
-            display: grid;
-            gap: 1.25rem;
-        }
-
-        @media (min-width: 900px) {
-            .two-col { grid-template-columns: 1fr 1fr; align-items: start; }
-            .two-col--budget { grid-template-columns: 1fr 1.1fr; }
-        }
-
-        /* Page load choreography */
-        @keyframes riseIn {
-            from {
-                opacity: 0;
-                transform: translateY(28px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes lineGrow {
-            from { transform: scaleX(0); }
-            to { transform: scaleX(1); }
-        }
-
-        @keyframes countPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
-        }
-
-        body:not(.loaded) .reveal {
-            opacity: 0;
-        }
-
-        body.loaded .reveal {
-            animation: riseIn 0.85s var(--ease-out) forwards;
-        }
-
-        body.loaded .reveal:nth-child(1) { animation-delay: 0.05s; }
-        body.loaded .reveal:nth-child(2) { animation-delay: 0.12s; }
-        body.loaded .reveal:nth-child(3) { animation-delay: 0.19s; }
-        body.loaded .reveal:nth-child(4) { animation-delay: 0.26s; }
-        body.loaded .reveal:nth-child(5) { animation-delay: 0.33s; }
-        body.loaded .reveal:nth-child(6) { animation-delay: 0.4s; }
-        body.loaded .reveal:nth-child(7) { animation-delay: 0.47s; }
-        body.loaded .reveal:nth-child(8) { animation-delay: 0.54s; }
-
-        body.loaded .header-rule {
-            animation: lineGrow 1.2s var(--ease-out) 0.2s forwards;
-            transform-origin: left;
-        }
-
-        /* Header */
-        .site-header {
-            padding: 2.5rem 0 2rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .site-header-top {
+        .hero-head {
             display: flex;
             flex-wrap: wrap;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 1.25rem;
+            gap: 1rem;
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-muted);
         }
 
-        .live-system-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            font-family: var(--font-body);
-            font-size: 1rem;
+        .hero-head h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .hero-meta {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+        }
+
+        .hero-system {
+            font-size: 0.9375rem;
+            margin-top: 0.5rem;
+        }
+
+        .hero-system a {
+            color: var(--accent);
             font-weight: 600;
-            color: var(--bg-void);
-            background: linear-gradient(135deg, var(--accent-gold-bright), var(--accent-gold));
+            text-decoration: none;
+        }
+
+        .hero-system a:hover { text-decoration: underline; }
+
+        .btn-outline {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--bg-surface);
             border: 1px solid var(--border-strong);
             border-radius: var(--radius);
             text-decoration: none;
             white-space: nowrap;
-            box-shadow: 0 4px 20px var(--glow-gold);
-            transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
         }
 
-        .live-system-cta:hover,
-        .live-system-cta:focus {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 28px var(--glow-gold);
-            color: var(--bg-void);
+        .btn-outline:hover {
+            background: var(--bg-muted);
+            border-color: var(--accent);
         }
 
-        .live-system-cta svg {
-            width: 1.125rem;
-            height: 1.125rem;
-            flex-shrink: 0;
-        }
-
-        .live-system-banner {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1.15rem 1.35rem;
-            margin-bottom: 1.25rem;
-            background: rgba(74, 155, 136, 0.12);
-            border: 1px solid rgba(74, 155, 136, 0.35);
-            border-radius: var(--radius);
-        }
-
-        .live-system-banner p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .live-system-banner strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .live-system-banner a:not(.live-system-cta) {
-            color: var(--accent-gold-bright);
-            font-weight: 600;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-
-        .site-header h1 {
-            font-family: var(--font-display);
-            font-size: clamp(1.75rem, 5vw, 2.5rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            color: var(--text-primary);
-        }
-
-        .site-header .meta {
-            margin-top: 0.75rem;
-            color: var(--text-secondary);
-            font-size: var(--text-base);
-        }
-
-        .site-header .meta strong {
-            color: var(--accent-gold-bright);
-            font-weight: 600;
-        }
-
-        .header-rule {
-            display: block;
-            height: 3px;
-            width: 100%;
-            max-width: 180px;
-            margin-top: 1.25rem;
-            background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold), var(--accent-pine));
-            transform: scaleX(0);
-        }
-
-        /* Stat grid */
-        .stat-grid {
+        .hero-metrics {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 1px;
+            background: var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         @media (min-width: 768px) {
-            .stat-grid { grid-template-columns: repeat(4, 1fr); }
+            .hero-metrics { grid-template-columns: repeat(4, 1fr); }
         }
 
-        .stat-card {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            padding: 1.35rem 1.25rem;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.25s, background 0.25s;
+        .metric {
+            background: var(--bg-surface);
+            padding: 1.25rem 1.5rem;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--accent-gold);
-            opacity: 0.5;
-        }
-
-        .stat-card:hover {
-            background: var(--bg-panel-hover);
-            border-color: var(--border-strong);
-        }
-
-        .stat-card--hero::before {
-            background: linear-gradient(90deg, var(--accent-crimson), var(--accent-gold));
-            opacity: 1;
-            height: 3px;
-        }
-
-        .stat-label {
+        .metric-label {
             font-size: 0.8125rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-dim);
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
         }
 
-        .stat-value {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
+        .metric-value {
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--accent-gold-bright);
-            margin-top: 0.5rem;
-            line-height: 1.1;
+            color: var(--text);
+            margin-top: 0.35rem;
             font-variant-numeric: tabular-nums;
+            line-height: 1.1;
         }
 
-        .stat-value--medium {
-            font-size: 1.75rem;
+        .metric-value--sm { font-size: 1.5rem; }
+        .metric-value--danger { color: var(--danger); font-size: 1.35rem; }
+        .metric-value--warn { color: var(--warn); }
+
+        .metric-note {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
         }
 
-        .stat-value--warn { color: var(--accent-gold); }
-        .stat-value--danger { color: var(--accent-crimson); font-size: 1.5rem; }
-
-        .stat-note {
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            line-height: 1.45;
+        .hero-budget {
+            padding: 1.5rem 1.75rem;
         }
 
-        /* Panels */
-        .panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            padding: 1.75rem;
-        }
-
-        .panel--nested {
-            margin-top: 1.25rem;
-        }
-
-        .panel-title {
-            font-family: var(--font-display);
-            font-size: var(--text-xl);
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.65rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .panel-subtitle {
+        .hero-budget-title {
             font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin: 1.75rem 0 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
         }
 
-        /* Tables */
-        .table-wrap { overflow-x: auto; margin: 0 -0.25rem; }
+        .hero-budget-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
 
-        table {
+        @media (min-width: 800px) {
+            .hero-budget-grid {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+        }
+
+        .budget-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 1rem;
         }
 
-        th {
+        .budget-table th,
+        .budget-table td {
+            padding: 0.65rem 0;
             text-align: left;
-            font-size: 0.8125rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-dim);
-            padding: 0.85rem 1rem;
-            border-bottom: 2px solid var(--border-strong);
-            background: var(--bg-inset);
+            border-bottom: 1px solid var(--border);
         }
 
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            vertical-align: top;
-            line-height: 1.55;
-        }
-
-        td strong { color: var(--text-primary); font-weight: 600; }
-
-        tr:last-child td { border-bottom: none; }
-
-        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-
-        td.phase-num {
-            font-family: var(--font-display);
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            width: 3rem;
-        }
-
-        .date-chip {
-            display: inline-block;
+        .budget-table th {
             font-weight: 600;
-            color: var(--accent-gold-bright);
+            color: var(--text-secondary);
+            width: 55%;
+        }
+
+        .budget-table td {
+            font-weight: 600;
+            text-align: right;
             font-variant-numeric: tabular-nums;
         }
 
-        .date-chip--final { color: var(--accent-pine); }
-
-        tr.highlight-row td { background: rgba(212, 162, 76, 0.06); }
-
-        /* Budget */
-        .budget-grid {
-            display: grid;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .budget-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .budget-row:last-child {
+        .budget-table tr:last-child th,
+        .budget-table tr:last-child td {
             border-bottom: none;
             padding-top: 0.75rem;
-            margin-top: 0.25rem;
-            border-top: 1px solid var(--border-strong);
-        }
-
-        .budget-row dt {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        .budget-row dd {
             font-size: 1.0625rem;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-            color: var(--text-primary);
         }
 
-        .budget-row--used dd { color: var(--accent-gold); }
-        .budget-row--balance dd { color: var(--accent-pine); font-size: 1.05rem; }
+        .meter-block + .meter-block { margin-top: 1rem; }
 
-        .meter {
-            margin-bottom: 1.1rem;
-        }
-
-        .meter-header {
+        .meter-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9375rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
             color: var(--text-secondary);
+            margin-bottom: 0.4rem;
             gap: 1rem;
         }
 
-        .meter-header span:last-child {
-            color: var(--text-secondary);
+        .meter-label span:last-child {
+            font-weight: 600;
+            color: var(--text);
             font-variant-numeric: tabular-nums;
         }
 
         .meter-track {
-            height: 12px;
-            background: var(--bg-inset);
-            border-radius: 4px;
+            height: 10px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
+            border-radius: 2px;
             overflow: hidden;
-            border: 1px solid var(--border-subtle);
         }
 
         .meter-fill {
             height: 100%;
-            border-radius: 1px;
             width: 0;
-            transition: width 1.4s var(--ease-out);
+            transition: width 0.6s ease;
         }
 
-        .meter-fill--project {
-            background: linear-gradient(90deg, #8b6914, var(--accent-gold));
-            box-shadow: 0 0 20px var(--glow-gold);
+        .meter-fill--project { background: var(--accent); }
+        .meter-fill--contract { background: #64748b; }
+
+        /* —— Nav & sections —— */
+        .page-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem 1.5rem;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
         }
 
-        .meter-fill--contract {
-            background: linear-gradient(90deg, var(--accent-crimson), #9a4a4a);
+        .page-nav a {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .page-nav a:hover { color: var(--accent); }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table.data {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+        table.data th {
+            text-align: left;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            background: var(--bg-muted);
+            border-bottom: 2px solid var(--border-strong);
+        }
+
+        table.data td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        table.data th.num { text-align: right; }
+
+        table.data tr:last-child td { border-bottom: none; }
+
+        table.data tfoot td {
+            font-weight: 700;
+            color: var(--text);
+            background: var(--bg-muted);
+            border-top: 2px solid var(--border-strong);
+        }
+
+        .phase { font-weight: 700; color: var(--text); }
+
+        .date { font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+
+        .card-subtitle {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.75rem;
         }
 
         /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 1.5rem;
+        .timeline { list-style: none; padding: 0; }
+
+        .timeline li {
+            padding: 0.75rem 0 0.75rem 1.25rem;
+            border-left: 2px solid var(--border-strong);
+            margin-left: 0.25rem;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 8px;
-            bottom: 8px;
-            width: 1px;
-            background: linear-gradient(180deg, var(--accent-gold), var(--accent-pine), transparent);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 1.35rem;
-            opacity: 0;
-            animation: riseIn 0.6s var(--ease-out) forwards;
-        }
-
-        body.loaded .timeline-item:nth-child(1) { animation-delay: 0.6s; }
-        body.loaded .timeline-item:nth-child(2) { animation-delay: 0.68s; }
-        body.loaded .timeline-item:nth-child(3) { animation-delay: 0.76s; }
-        body.loaded .timeline-item:nth-child(4) { animation-delay: 0.84s; }
-        body.loaded .timeline-item:nth-child(5) { animation-delay: 0.92s; }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -1.45rem;
-            top: 0.35rem;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--bg-panel);
-            border: 2px solid var(--accent-gold);
-            box-shadow: 0 0 12px var(--glow-gold);
-        }
-
-        .timeline-item.past::before {
-            border-color: var(--text-dim);
-            box-shadow: none;
-            background: var(--text-dim);
-        }
-
-        .timeline-item.future::before {
-            border-color: var(--accent-pine);
-            box-shadow: 0 0 12px rgba(74, 155, 136, 0.35);
-        }
+        .timeline li + li { margin-top: 0; }
 
         .timeline-date {
             font-size: 0.875rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            color: var(--accent-gold);
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
         .timeline-title {
-            font-size: 1rem;
             font-weight: 500;
-            color: var(--text-primary);
-            margin: 0.35rem 0;
-            line-height: 1.5;
+            color: var(--text);
+            margin: 0.2rem 0;
         }
 
         .timeline-amount {
-            font-size: 1rem;
-            font-variant-numeric: tabular-nums;
+            font-size: 0.9375rem;
             color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
         }
 
         /* Checklist */
-        .checklist-header {
+        .checklist-top {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -631,332 +372,250 @@
             margin-bottom: 1rem;
         }
 
-        .checklist-note {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.25rem;
-            line-height: 1.55;
-        }
-
         .km-meter {
-            flex: 1;
-            min-width: 220px;
-            max-width: 320px;
-            height: 14px;
-            background: var(--bg-inset);
-            border-radius: 2px;
-            overflow: hidden;
-            border: 1px solid var(--border-subtle);
+            width: 100%;
+            max-width: 240px;
+            height: 12px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border);
             position: relative;
         }
 
         .km-meter-fill {
             height: 100%;
+            background: var(--accent);
             width: 0;
-            background: linear-gradient(90deg, var(--accent-pine), #6bc4b0);
-            transition: width 0.5s var(--ease-out);
+            transition: width 0.3s;
         }
 
-        .km-meter-label {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            mix-blend-mode: difference;
+        .km-meter-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
         }
 
-        .accordion-item {
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-        }
+        .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .accordion + .accordion { margin-top: 0.5rem; }
 
-        .accordion-trigger {
+        .accordion-btn {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.15rem;
-            background: var(--bg-inset);
-            border: none;
-            color: var(--text-primary);
-            font-family: var(--font-body);
+            padding: 0.85rem 1rem;
+            font-family: var(--font);
             font-size: 1rem;
             font-weight: 600;
             text-align: left;
+            color: var(--text);
+            background: var(--bg-muted);
+            border: none;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .accordion-trigger:hover { background: var(--bg-panel-hover); }
+        .accordion-btn:hover { background: #eef0f2; }
 
-        .accordion-trigger svg {
-            width: 14px;
-            height: 14px;
+        .accordion-btn svg {
+            width: 1rem;
+            height: 1rem;
             flex-shrink: 0;
-            transition: transform 0.3s var(--ease-out);
-            stroke: var(--accent-gold);
+            transition: transform 0.2s;
         }
 
-        .accordion-trigger[aria-expanded="true"] svg {
-            transform: rotate(180deg);
-        }
+        .accordion-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
 
-        .accordion-body {
-            overflow-x: auto;
-        }
-
-        .accordion-body.collapsed {
-            display: none;
-        }
+        .accordion-panel.collapsed { display: none; }
 
         .badge {
-            display: inline-block;
             font-size: 0.75rem;
             font-weight: 700;
-            letter-spacing: 0.04em;
             text-transform: uppercase;
-            padding: 0.2rem 0.55rem;
-            border-radius: 4px;
-            border: 1px solid;
+            padding: 0.15rem 0.45rem;
+            border-radius: 2px;
         }
 
-        .badge--high {
-            color: #e8a0a0;
-            border-color: rgba(196, 92, 92, 0.5);
-            background: rgba(196, 92, 92, 0.12);
-        }
-
-        .badge--med {
-            color: var(--text-dim);
-            border-color: var(--border-subtle);
-            background: var(--bg-inset);
-        }
+        .badge--high { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .badge--med { background: var(--bg-muted); color: var(--text-muted); border: 1px solid var(--border); }
 
         input[type="checkbox"] {
             width: 1.125rem;
             height: 1.125rem;
-            accent-color: var(--accent-pine);
+            accent-color: var(--accent);
             cursor: pointer;
         }
 
-        .tabular { font-variant-numeric: tabular-nums; }
-
-        .site-footer {
+        .footer {
             text-align: center;
-            padding: 2rem 0 0;
+            padding-top: 2rem;
             font-size: 0.875rem;
-            color: var(--text-dim);
-        }
-
-        @media (min-width: 1024px) {
-            :root {
-                --text-base: 1.125rem;
-                --text-lg: 1.25rem;
-                --text-xl: 1.5rem;
-            }
-            table { font-size: 1.0625rem; }
-        }
-
-        @media (max-width: 899px) {
-            .two-col--budget .panel + .panel {
-                margin-top: 0;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
-    <div class="atmosphere" aria-hidden="true"></div>
-
     <div class="shell">
-        <header class="site-header reveal">
-            <div class="site-header-top">
+        <section class="hero" id="overview">
+            <div class="hero-head">
                 <div>
                     <h1>Integrated System — Project Progress</h1>
-                    <p class="meta">Kickoff <strong>03/02/2026</strong> · Handover <strong>23/06/2026</strong> · 20-week contract</p>
+                    <p class="hero-meta">Kickoff 03/02/2026 · Handover 23/06/2026 · 20 weeks</p>
+                    <p class="hero-system">Live system: <a href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">www.zhichar.systems.gov.bt</a></p>
                 </div>
-                <a class="live-system-cta" href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    Visit live system
-                </a>
+                <a class="btn-outline" href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">Open system</a>
             </div>
-            <span class="header-rule" aria-hidden="true"></span>
-        </header>
 
-        <nav class="page-nav reveal" aria-label="Page sections">
+            <div class="hero-metrics" aria-label="Overview">
+                <div class="metric">
+                    <p class="metric-label">Days until handover</p>
+                    <p class="metric-value" id="days-remaining">—</p>
+                    <p class="metric-note">Due <span id="handover-date-label">23/06/2026</span></p>
+                </div>
+                <div class="metric">
+                    <p class="metric-label">Time elapsed</p>
+                    <p class="metric-value metric-value--sm" id="elapsed-days-value">—</p>
+                    <p class="metric-note" id="elapsed-days">—</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-label">Budget used</p>
+                    <p class="metric-value metric-value--sm" id="budget-used-pct">—</p>
+                    <p class="metric-note tabular-nums" id="budget-used-amount">—</p>
+                </div>
+                <div class="metric">
+                    <p class="metric-label">KM checklist</p>
+                    <p class="metric-value metric-value--sm" id="overall-progress-text">0%</p>
+                    <p class="metric-note">DSO&amp;M items</p>
+                </div>
+            </div>
+
+            <div class="hero-budget">
+                <h2 class="hero-budget-title">Budget utilization</h2>
+                <div class="hero-budget-grid">
+                    <table class="budget-table">
+                        <tbody>
+                            <tr><th scope="row">Contract amount</th><td id="budget-contract">—</td></tr>
+                            <tr><th scope="row">Project amount</th><td id="budget-project">—</td></tr>
+                            <tr><th scope="row">Amount used</th><td id="budget-used">—</td></tr>
+                            <tr><th scope="row">Balance</th><td id="budget-balance">—</td></tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <div class="meter-block">
+                            <div class="meter-label"><span>Used vs project amount</span><span id="budget-bar-project-label">—</span></div>
+                            <div class="meter-track"><div class="meter-fill meter-fill--project" id="budget-bar-project"></div></div>
+                        </div>
+                        <div class="meter-block">
+                            <div class="meter-label"><span>Used vs contract amount</span><span id="budget-bar-contract-label">—</span></div>
+                            <div class="meter-track"><div class="meter-fill meter-fill--contract" id="budget-bar-contract"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="page-nav" aria-label="Sections">
             <a href="#overview">Overview</a>
             <a href="#schedule">Schedule</a>
-            <a href="#finance">Finance</a>
+            <a href="#payments">Payments</a>
             <a href="#compliance">Compliance</a>
         </nav>
 
-        <section id="overview" class="section-block reveal">
-            <h2 class="section-heading">Overview</h2>
-            <p class="section-desc">Key dates, budget use, and GovTech handover checklist at a glance.</p>
-            <div class="live-system-banner" role="status">
-                <p><strong>System live.</strong> The Integrated System (Zhichar) is deployed at <a href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">www.zhichar.systems.gov.bt</a></p>
-                <a class="live-system-cta" href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    Open www.zhichar.systems.gov.bt
-                </a>
-            </div>
-            <div class="stat-grid" aria-label="Summary metrics">
-                <article class="stat-card stat-card--hero">
-                    <p class="stat-label">Days until handover</p>
-                    <p class="stat-value" id="days-remaining">—</p>
-                    <p class="stat-note">Due <span id="handover-date-label">23/06/2026</span></p>
-                </article>
-                <article class="stat-card">
-                    <p class="stat-label">Time elapsed</p>
-                    <p class="stat-value stat-value--medium" id="elapsed-days-value">—</p>
-                    <p class="stat-note" id="elapsed-days">—</p>
-                </article>
-                <article class="stat-card">
-                    <p class="stat-label">Budget used</p>
-                    <p class="stat-value stat-value--medium" id="budget-used-pct">—</p>
-                    <p class="stat-note tabular" id="budget-used-amount">—</p>
-                </article>
-                <article class="stat-card">
-                    <p class="stat-label">KM checklist</p>
-                    <p class="stat-value stat-value--medium" id="overall-progress-text">0%</p>
-                    <p class="stat-note">GovTech DSO&amp;M items</p>
-                </article>
-            </div>
-        </section>
-
-        <section id="schedule" class="section-block reveal">
-            <h2 class="section-heading">Schedule</h2>
-            <p class="section-desc">Contract phases, deliverables, due dates, and payment percentages.</p>
-            <div class="panel" aria-labelledby="milestones-title">
-            <h3 class="subsection-title" id="milestones-title">Milestone completion dates</h3>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Phase</th>
-                            <th>Deliverable</th>
-                            <th>Due</th>
-                            <th>Pay %</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="phase-num">1</td>
-                            <td>Inception report, SRS, system architecture &amp; design document</td>
-                            <td><span class="date-chip">24/02/2026</span></td>
-                            <td>20%</td>
-                        </tr>
-                        <tr>
-                            <td class="phase-num">2</td>
-                            <td>Core modules — RBAC, MIS, building info, spatial plan, emergency shelter, public portal</td>
-                            <td><span class="date-chip">26/05/2026</span></td>
-                            <td>40%</td>
-                        </tr>
-                        <tr>
-                            <td class="phase-num">3</td>
-                            <td>Deployment, configuration, operations, Zhichar migration</td>
-                            <td><span class="date-chip">02/06/2026</span></td>
-                            <td>30%</td>
-                        </tr>
-                        <tr>
-                            <td class="phase-num">4</td>
-                            <td>UAT completed</td>
-                            <td><span class="date-chip">09/06/2026</span></td>
-                            <td rowspan="3">10%</td>
-                        </tr>
-                        <tr>
-                            <td class="phase-num">5</td>
-                            <td>Admin guides, SRS updates, manuals, video guides</td>
-                            <td><span class="date-chip">16/06/2026</span></td>
-                        </tr>
-                        <tr class="highlight-row">
-                            <td class="phase-num">6</td>
-                            <td>Administrator training &amp; final report</td>
-                            <td><span class="date-chip date-chip--final">23/06/2026</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            </div>
-        </section>
-
-        <section id="finance" class="section-block reveal">
-            <h2 class="section-heading">Finance</h2>
-            <p class="section-desc">Budget utilization and recorded payments / expenditure.</p>
-            <div class="two-col two-col--budget">
-                <div class="panel" aria-labelledby="budget-title">
-                    <h3 class="subsection-title" id="budget-title">Budget utilization</h3>
-                    <dl class="budget-grid">
-                        <div class="budget-row"><dt>Contract amount</dt><dd id="budget-contract">—</dd></div>
-                        <div class="budget-row"><dt>Project amount</dt><dd id="budget-project">—</dd></div>
-                        <div class="budget-row budget-row--used"><dt>Amount used</dt><dd id="budget-used">—</dd></div>
-                        <div class="budget-row budget-row--balance"><dt>Balance</dt><dd id="budget-balance">—</dd></div>
-                    </dl>
-                    <div class="meter">
-                        <div class="meter-header"><span>Used vs project amount</span><span class="tabular" id="budget-bar-project-label">—</span></div>
-                        <div class="meter-track"><div class="meter-fill meter-fill--project" id="budget-bar-project"></div></div>
-                    </div>
-                    <div class="meter">
-                        <div class="meter-header"><span>Used vs contract amount</span><span class="tabular" id="budget-bar-contract-label">—</span></div>
-                        <div class="meter-track"><div class="meter-fill meter-fill--contract" id="budget-bar-contract"></div></div>
-                    </div>
-                </div>
-                <div class="panel" aria-labelledby="payments-title">
-                    <h3 class="subsection-title" id="payments-title">Payments &amp; expenditure</h3>
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Particular</th>
-                                    <th class="num">Amount (Nu.)</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payment-table-body"></tbody>
-                            <tfoot>
-                                <tr class="highlight-row">
-                                    <td colspan="2"><strong>Total (listed)</strong></td>
-                                    <td class="num tabular" id="payment-total">—</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <p class="panel-subtitle">Chronological order</p>
-                    <div class="timeline" id="payment-timeline"></div>
+        <section class="section" id="schedule">
+            <h2 class="section-title">Schedule</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Deliverable</th>
+                                <th>Due</th>
+                                <th>Pay %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="phase">1</td>
+                                <td>Inception report, SRS, system architecture &amp; design document</td>
+                                <td class="date">24/02/2026</td>
+                                <td>20%</td>
+                            </tr>
+                            <tr>
+                                <td class="phase">2</td>
+                                <td>Core modules — RBAC, MIS, building info, spatial plan, emergency shelter, public portal</td>
+                                <td class="date">26/05/2026</td>
+                                <td>40%</td>
+                            </tr>
+                            <tr>
+                                <td class="phase">3</td>
+                                <td>Deployment, configuration, operations, Zhichar migration</td>
+                                <td class="date">02/06/2026</td>
+                                <td>30%</td>
+                            </tr>
+                            <tr>
+                                <td class="phase">4</td>
+                                <td>UAT completed</td>
+                                <td class="date">09/06/2026</td>
+                                <td rowspan="3">10%</td>
+                            </tr>
+                            <tr>
+                                <td class="phase">5</td>
+                                <td>Admin guides, SRS updates, manuals, video guides</td>
+                                <td class="date">16/06/2026</td>
+                            </tr>
+                            <tr>
+                                <td class="phase">6</td>
+                                <td>Administrator training &amp; final report</td>
+                                <td class="date">23/06/2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
-        <section id="compliance" class="section-block reveal">
-            <h2 class="section-heading">Compliance</h2>
-            <p class="section-desc">GovTech Knowledge Management checklist — high-priority items required before handover.</p>
-            <div class="panel" aria-labelledby="km-title">
-            <div class="checklist-header">
-                <h3 class="subsection-title" id="km-title" style="margin:0;border:0;padding:0">KM process checklist (DSO&amp;M)</h3>
-                <div class="km-meter">
-                    <div class="km-meter-fill" id="compliance-progress-bar"></div>
-                    <span class="km-meter-label" id="compliance-progress-label">0%</span>
+        <section class="section" id="payments">
+            <h2 class="section-title">Payments &amp; expenditure</h2>
+            <div class="card">
+                <div class="table-wrap">
+                    <table class="data">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Particular</th>
+                                <th class="num">Amount (Nu.)</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payment-table-body"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Total (listed)</td>
+                                <td class="num" id="payment-total">—</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-            </div>
-            <div id="checklist-accordion"></div>
+                <p class="card-subtitle">Chronological</p>
+                <ul class="timeline" id="payment-timeline"></ul>
             </div>
         </section>
 
-        <footer class="site-footer reveal">ISSPB · Integrated System</footer>
+        <section class="section" id="compliance">
+            <h2 class="section-title">GovTech KM checklist (DSO&amp;M)</h2>
+            <div class="card">
+                <div class="checklist-top">
+                    <p class="km-meter-text" id="compliance-progress-label">0% complete</p>
+                    <div>
+                        <div class="km-meter"><div class="km-meter-fill" id="compliance-progress-bar"></div></div>
+                    </div>
+                </div>
+                <div id="checklist-accordion"></div>
+            </div>
+        </section>
+
+        <footer class="footer">ISSPB · Integrated System</footer>
     </div>
 
     <script>
@@ -993,16 +652,15 @@
 
         function setDaysRemaining(daysLeft) {
             const el = document.getElementById('days-remaining');
-            el.className = 'stat-value';
+            el.className = 'metric-value';
             if (daysLeft > 0) {
                 el.textContent = String(daysLeft);
-                el.style.animation = 'countPulse 3s ease-in-out infinite';
             } else if (daysLeft === 0) {
                 el.textContent = '0';
-                el.classList.add('stat-value--warn');
+                el.classList.add('metric-value--warn');
             } else {
-                el.textContent = Math.abs(daysLeft) + 'd late';
-                el.classList.add('stat-value--danger');
+                el.textContent = Math.abs(daysLeft) + ' days overdue';
+                el.classList.add('metric-value--danger');
             }
         }
 
@@ -1022,26 +680,20 @@
             document.getElementById('budget-bar-contract-label').textContent = pctContract + '%';
 
             requestAnimationFrame(() => {
-                setTimeout(() => {
-                    document.getElementById('budget-bar-project').style.width = Math.min(pctProject, 100) + '%';
-                    document.getElementById('budget-bar-contract').style.width = Math.min(pctContract, 100) + '%';
-                }, 400);
+                document.getElementById('budget-bar-project').style.width = Math.min(pctProject, 100) + '%';
+                document.getElementById('budget-bar-contract').style.width = Math.min(pctContract, 100) + '%';
             });
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const handover = parseIsoDate(handoverDate);
-            const kickoff = parseIsoDate(kickoffDate);
-            setDaysRemaining(daysBetween(today, handover));
-            const elapsed = daysBetween(kickoff, today);
-            const elapsedEl = document.getElementById('elapsed-days-value');
-            const elapsedNote = document.getElementById('elapsed-days');
+            setDaysRemaining(daysBetween(today, parseIsoDate(handoverDate)));
+            const elapsed = daysBetween(parseIsoDate(kickoffDate), today);
             if (elapsed >= 0) {
-                elapsedEl.textContent = elapsed + ' days';
-                elapsedNote.textContent = 'Since kickoff 03/02/2026';
+                document.getElementById('elapsed-days-value').textContent = elapsed + ' days';
+                document.getElementById('elapsed-days').textContent = 'Since 03/02/2026';
             } else {
-                elapsedEl.textContent = '—';
-                elapsedNote.textContent = 'Before kickoff';
+                document.getElementById('elapsed-days-value').textContent = '—';
+                document.getElementById('elapsed-days').textContent = '—';
             }
         }
 
@@ -1061,21 +713,12 @@
             });
             document.getElementById('payment-total').textContent = formatNu(total);
 
-            const sorted = [...paymentRows].sort((a, b) => a.sort.localeCompare(b.sort));
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            sorted.forEach(row => {
-                let cls = '';
-                if (row.date) {
-                    const [d, m, y] = row.date.split('/').map(Number);
-                    cls = new Date(y, m - 1, d) < today ? 'past' : 'future';
-                }
-                timeline.innerHTML += `<div class="timeline-item ${cls}">
-                    <p class="timeline-date">${row.date || 'Date TBD'}</p>
-                    <p class="timeline-title">${row.particular}</p>
-                    <p class="timeline-amount">Nu. ${formatNu(row.amount)}</p>
-                </div>`;
+            [...paymentRows].sort((a, b) => a.sort.localeCompare(b.sort)).forEach(row => {
+                timeline.innerHTML += `<li>
+                    <div class="timeline-date">${row.date || '—'}</div>
+                    <div class="timeline-title">${row.particular}</div>
+                    <div class="timeline-amount">Nu. ${formatNu(row.amount)}</div>
+                </li>`;
             });
         }
 
@@ -1232,24 +875,22 @@
                     const badge = item.priority === 'High' ? 'badge--high' : 'badge--med';
                     const checked = saved[item.id] ? 'checked' : '';
                     return `<tr>
-                        <td style="color:var(--text-dim);font-weight:600">${item.id}</td>
+                        <td>${item.id}</td>
                         <td>${item.text}</td>
                         <td><span class="badge ${badge}">${item.priority}</span></td>
-                        <td style="text-align:center"><input type="checkbox" data-item-id="${item.id}" onchange="onChecklistChange(this)" aria-label="Mark ${item.id} complete" ${checked}></td>
+                        <td style="text-align:center"><input type="checkbox" data-item-id="${item.id}" onchange="onChecklistChange(this)" ${checked}></td>
                     </tr>`;
                 }).join('');
 
                 const item = document.createElement('div');
-                item.className = 'accordion-item';
+                item.className = 'accordion';
                 item.innerHTML = `
-                    <button type="button" class="accordion-trigger" aria-expanded="true" onclick="toggleSection(this,'${panelId}')">
+                    <button type="button" class="accordion-btn" aria-expanded="true" onclick="toggleSection(this,'${panelId}')">
                         <span>${section.category}</span>${chevronSvg}
                     </button>
-                    <div id="${panelId}" class="accordion-body">
-                        <table>
-                            <thead><tr>
-                                <th>ID</th><th>Requirement</th><th>Priority</th><th style="text-align:center">Done</th>
-                            </tr></thead>
+                    <div id="${panelId}" class="accordion-panel">
+                        <table class="data">
+                            <thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th style="text-align:center">Done</th></tr></thead>
                             <tbody>${rowsHtml}</tbody>
                         </table>
                     </div>`;
@@ -1271,7 +912,7 @@
             checkboxes.forEach(c => { if (c.checked) n++; });
             const pct = total ? Math.round((n / total) * 100) : 0;
             document.getElementById('compliance-progress-bar').style.width = pct + '%';
-            document.getElementById('compliance-progress-label').textContent = pct + '% (' + n + '/' + total + ')';
+            document.getElementById('compliance-progress-label').textContent = pct + '% complete (' + n + '/' + total + ')';
             document.getElementById('overall-progress-text').textContent = pct + '%';
         }
 
@@ -1280,7 +921,6 @@
             renderPayments();
             renderChecklist();
             calculateProgress();
-            requestAnimationFrame(() => document.body.classList.add('loaded'));
         };
     </script>
 </body>
