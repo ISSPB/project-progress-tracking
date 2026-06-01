@@ -3,208 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project & GovTech Compliance Dashboard</title>
+    <title>Integrated System — Project Progress</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .timeline-track { position: relative; padding-left: 1.25rem; }
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            left: 0.4rem;
+            top: 0.5rem;
+            bottom: 0.5rem;
+            width: 2px;
+            background: #cbd5e1;
+        }
+        .timeline-item { position: relative; padding-bottom: 1.25rem; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.95rem;
+            top: 0.35rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f59e0b;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #cbd5e1;
+        }
+        .timeline-item.past::before { background: #64748b; }
+        .timeline-item.future::before { background: #3b82f6; }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900 antialiased">
 
-    <header class="bg-slate-900 text-white shadow-md border-b-4 border-amber-500">
-        <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-amber-500 p-2 rounded-lg text-slate-900">
-                    <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight">Integrated System Project Dashboard</h1>
-                    <p class="text-xs text-slate-400 mt-0.5">Timeline Visualization & GovTech KM Process Audit</p>
-                </div>
-            </div>
-            <div class="bg-slate-800 px-4 py-2 rounded-md border border-slate-700 text-center md:text-right">
-                <span class="text-xs uppercase tracking-wider text-slate-400 block font-semibold">Project Kickoff Date</span>
-                <span class="text-sm font-bold text-amber-400">February 3, 2026</span>
-            </div>
+    <header class="bg-slate-900 text-white border-b-4 border-amber-500">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h1 class="text-lg font-bold">Integrated System — Project Progress</h1>
+            <p class="text-sm text-slate-300">Contract signing / kickoff: <span class="font-semibold text-white">03/02/2026</span></p>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Duration</p>
-                    <p class="text-2xl font-black text-slate-800 mt-1">20 Weeks</p>
-                </div>
-                <div class="text-blue-500 bg-blue-50 p-3 rounded-xl"><i data-lucide="calendar"></i></div>
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <p class="text-gray-500 text-xs uppercase">Contract period</p>
+                <p class="font-bold text-slate-800 mt-1">03/02/2026 – 23/06/2026</p>
+                <p class="text-gray-500 text-xs mt-1">20 weeks</p>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Calculated End Date</p>
-                    <p class="text-2xl font-black text-slate-800 mt-1">June 23, 2026</p>
-                </div>
-                <div class="text-emerald-500 bg-emerald-50 p-3 rounded-xl"><i data-lucide="calendar-check"></i></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <p class="text-gray-500 text-xs uppercase">Final deliverable due</p>
+                <p class="font-bold text-slate-800 mt-1">23/06/2026</p>
+                <p class="text-gray-500 text-xs mt-1">Phase 6 — training & final report</p>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Budget Milestones</p>
-                    <p class="text-2xl font-black text-slate-800 mt-1">20% / 40% / 30% / 10%</p>
-                </div>
-                <div class="text-amber-500 bg-amber-50 p-3 rounded-xl"><i data-lucide="dollar-sign"></i></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <p class="text-gray-500 text-xs uppercase">Contract payment split</p>
+                <p class="font-bold text-slate-800 mt-1">20% · 40% · 30% · 10%</p>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">KM Checklist Progress</p>
-                    <p class="text-2xl font-black text-slate-800 mt-1" id="overall-progress-text">0%</p>
-                </div>
-                <div class="text-indigo-500 bg-indigo-50 p-3 rounded-xl"><i data-lucide="shield-check"></i></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <p class="text-gray-500 text-xs uppercase">KM checklist</p>
+                <p class="font-bold text-slate-800 mt-1" id="overall-progress-text">0%</p>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div class="flex items-center gap-2 mb-6">
-                <i data-lucide="milestone" class="text-amber-500 w-5 h-5"></i>
-                <h2 class="text-lg font-bold text-slate-800">Contract Deliverables & Timeline Schedule</h2>
-            </div>
-
+        <section class="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 class="font-bold text-slate-800 mb-4">Contract milestone completion dates</h2>
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[800px]">
+                <table class="w-full text-sm border-collapse min-w-[640px]">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-gray-200 text-xs font-bold uppercase tracking-wider text-gray-500">
-                            <th class="py-3 px-4">Deliverable / Phase</th>
-                            <th class="py-3 px-4">Contract Timeline Requirement</th>
-                            <th class="py-3 px-4">Target Due Date</th>
-                            <th class="py-3 px-4">Budget Release</th>
+                        <tr class="bg-slate-50 border-b border-gray-200 text-xs uppercase text-gray-500">
+                            <th class="py-2 px-3 text-left">Phase</th>
+                            <th class="py-2 px-3 text-left">Deliverable</th>
+                            <th class="py-2 px-3 text-left">Due date</th>
+                            <th class="py-2 px-3 text-left">Payment %</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 1: Foundations & Setup</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">Inception Report, SRS, System Architecture & Design Document</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">Within 3 weeks from signing</td>
-                            <td class="py-4 px-4"><span class="bg-amber-50 text-amber-700 font-medium px-2.5 py-1 rounded border border-amber-200">Feb 24, 2026</span></td>
-                            <td class="py-4 px-4 font-bold text-slate-700">20%</td>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="py-3 px-3 font-medium">1</td>
+                            <td class="py-3 px-3">Inception report, SRS, system architecture & design document</td>
+                            <td class="py-3 px-3 font-semibold text-amber-800">24/02/2026</td>
+                            <td class="py-3 px-3">20%</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 2: Core Module Development</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">Shared Services (RBAC), MIS Dashboards, Building Info, Spatial Plan, Emergency Shelter Overlay, Public Self-Servicing Portal</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">13 weeks from Final Inception Report</td>
-                            <td class="py-4 px-4"><span class="bg-blue-50 text-blue-700 font-medium px-2.5 py-1 rounded border border-blue-200">May 26, 2026</span></td>
-                            <td class="py-4 px-4 font-bold text-slate-700">40%</td>
+                        <tr>
+                            <td class="py-3 px-3 font-medium">2</td>
+                            <td class="py-3 px-3">Core modules (RBAC, MIS, building info, spatial plan, emergency shelter overlay, public portal)</td>
+                            <td class="py-3 px-3 font-semibold text-blue-800">26/05/2026</td>
+                            <td class="py-3 px-3">40%</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 3: System Deployment & Migration</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">System fully deployed, configured, operational, and successful migration of Zhichar data</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">1 week from system modules completion</td>
-                            <td class="py-4 px-4"><span class="bg-indigo-50 text-indigo-700 font-medium px-2.5 py-1 rounded border border-indigo-200">June 2, 2026</span></td>
-                            <td class="py-4 px-4 font-bold text-slate-700">30%</td>
+                        <tr>
+                            <td class="py-3 px-3 font-medium">3</td>
+                            <td class="py-3 px-3">Deployment, configuration, operations, Zhichar data migration</td>
+                            <td class="py-3 px-3 font-semibold">02/06/2026</td>
+                            <td class="py-3 px-3">30%</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 4: Testing & Sign-off</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">User Acceptance Testing (UAT) completed</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">1 week from completion of System deployment</td>
-                            <td class="py-4 px-4"><span class="bg-purple-50 text-purple-700 font-medium px-2.5 py-1 rounded border border-purple-200">June 9, 2026</span></td>
-                            <td class="py-4 px-4 font-bold text-slate-700" rowspan="3">10%<br><span class="text-[10px] font-normal text-gray-400 block">Combined Total Release</span></td>
+                        <tr>
+                            <td class="py-3 px-3 font-medium">4</td>
+                            <td class="py-3 px-3">UAT completed</td>
+                            <td class="py-3 px-3 font-semibold">09/06/2026</td>
+                            <td class="py-3 px-3" rowspan="3">10%</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 5: Manuals & Technical Handover</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">Administrator guides, SRS updates, End-User manuals, Video Guides</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">1 week from completion of UAT</td>
-                            <td class="py-4 px-4"><span class="bg-purple-50 text-purple-700 font-medium px-2.5 py-1 rounded border border-purple-200">June 16, 2026</span></td>
+                        <tr>
+                            <td class="py-3 px-3 font-medium">5</td>
+                            <td class="py-3 px-3">Admin guides, SRS updates, end-user manuals, video guides</td>
+                            <td class="py-3 px-3 font-semibold">16/06/2026</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-4 px-4">
-                                <span class="font-semibold text-slate-800 block">Phase 6: Training & Final Report</span>
-                                <span class="text-xs text-gray-400 block mt-0.5">Training of system administrators and submission of final report</span>
-                            </td>
-                            <td class="py-4 px-4 text-gray-600">1 week from submission of required documents & video guides</td>
-                            <td class="py-4 px-4"><span class="bg-emerald-50 text-emerald-700 font-medium px-2.5 py-1 rounded border border-emerald-200">June 23, 2026</span></td>
+                        <tr>
+                            <td class="py-3 px-3 font-medium">6</td>
+                            <td class="py-3 px-3">Administrator training & final report</td>
+                            <td class="py-3 px-3 font-semibold text-emerald-800">23/06/2026</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="users" class="text-slate-700 w-5 h-5"></i>
-                <h2 class="text-lg font-bold text-slate-800">Appendix C: Contracted Key Personnel Matrix</h2>
+        <section class="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 class="font-bold text-slate-800 mb-4">Payment & expenditure timeline</h2>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full text-sm border-collapse min-w-[560px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-gray-200 text-xs uppercase text-gray-500">
+                            <th class="py-2 px-3 text-left w-12">#</th>
+                            <th class="py-2 px-3 text-left">Particular</th>
+                            <th class="py-2 px-3 text-right">Amount (Nu.)</th>
+                            <th class="py-2 px-3 text-left w-28">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="payment-table-body"></tbody>
+                    <tfoot>
+                        <tr class="bg-slate-50 font-semibold border-t border-gray-200">
+                            <td class="py-3 px-3" colspan="2">Total (listed items)</td>
+                            <td class="py-3 px-3 text-right" id="payment-total">—</td>
+                            <td class="py-3 px-3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-amber-500 text-white p-2 rounded-lg text-xs font-bold">SN</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Sonam Namgyel</h4><p class="text-xs text-slate-500">Team Lead</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">PN</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Phuntsho Norbu</h4><p class="text-xs text-slate-500">GIS Officer/Engineer</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">TR</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Tshawang Rinzin</h4><p class="text-xs text-slate-500">DevOps Lead</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">SD</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Sonam Dorji</h4><p class="text-xs text-slate-500">Backend Developer</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">SD</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Sonam Dargay</h4><p class="text-xs text-slate-500">Full Stack Developer</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">CT</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Chimi Tshewang</h4><p class="text-xs text-slate-500">Frontend Developer</p></div>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                    <div class="bg-slate-700 text-white p-2 rounded-lg text-xs font-bold">YD</div>
-                    <div><h4 class="font-bold text-slate-800 text-sm">Yeshi Dema</h4><p class="text-xs text-slate-500">QA Engineer</p></div>
-                </div>
-            </div>
+
+            <h3 class="text-sm font-semibold text-slate-700 mb-3">Chronological view</h3>
+            <div class="timeline-track" id="payment-timeline"></div>
         </section>
 
-        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
-            <div class="flex gap-3">
-                <i data-lucide="alert-circle" class="text-amber-600 w-5 h-5 flex-shrink-0 mt-0.5"></i>
-                <div>
-                    <h3 class="font-bold text-amber-800 text-sm">GovTech Support Requirement Warning</h3>
-                    <p class="text-xs text-amber-700 mt-1">
-                        According to the GovTech DSO&M standards, <strong>all "High" priority items</strong> must be fully checked and fulfilled to receive uninterrupted operational platform support. Partially completed handovers incur structured operational delays of up to 5 working days.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4 mb-6">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="clipboard-check" class="text-indigo-600 w-5 h-5"></i>
-                    <h2 class="text-lg font-bold text-slate-800">GovTech Knowledge Management Compliance Audit</h2>
-                </div>
-                <div class="w-full sm:w-64 bg-gray-100 h-4 rounded-full overflow-hidden border relative">
+        <section class="bg-white border border-gray-200 rounded-lg p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3 mb-4">
+                <h2 class="font-bold text-slate-800">GovTech KM process checklist (DSO&amp;M)</h2>
+                <div class="w-full sm:w-56 bg-gray-100 h-3 rounded-full overflow-hidden border relative">
                     <div id="compliance-progress-bar" class="bg-indigo-600 h-full transition-all duration-300 w-0"></div>
-                    <span id="compliance-progress-label" class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-700">0% Checked</span>
+                    <span id="compliance-progress-label" class="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-slate-700">0%</span>
                 </div>
             </div>
-
-            <div id="checklist-accordion" class="space-y-4"></div>
+            <p class="text-xs text-gray-500 mb-4">High-priority items must be complete before GovTech operational handover.</p>
+            <div id="checklist-accordion" class="space-y-3"></div>
         </section>
     </main>
 
-    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-12 border-t border-slate-800 text-center">
-        <p>© 2026 GovTech Agency Framework Monitor Application • Engineered for Strict Operational Handovers.</p>
+    <footer class="border-t border-gray-200 py-4 text-center text-xs text-gray-500">
+        Integrated System contract progress tracker
     </footer>
 
     <script>
         const STORAGE_KEY = 'isspb-km-checklist-v1';
+
+        const paymentRows = [
+            { num: 1, particular: '20% Payment on Submission or SRS', amount: 930000, date: '23/03/2026', sort: '2026-03-23' },
+            { num: 2, particular: 'Workshop at Paro — hotel bill', amount: 114287.25, date: '20/03/2026', sort: '2026-03-20' },
+            { num: 3, particular: 'Workshop at Paro — TADA / Mileage', amount: 87215.75, date: null, sort: '9999-12-31' },
+            { num: 3, particular: '30% payment to GDC Cloud Division', amount: 1395000, date: '07/04/2026', sort: '2026-04-07' },
+            { num: 4, particular: '40% payment to Cloud Bhutan', amount: 1860000, date: '21/06/2026', sort: '2026-06-21' }
+        ];
+
+        function formatNu(n) {
+            return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function renderPayments() {
+            const tbody = document.getElementById('payment-table-body');
+            const timeline = document.getElementById('payment-timeline');
+            let total = 0;
+
+            paymentRows.forEach(row => {
+                total += row.amount;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-3">${row.num}</td>
+                        <td class="py-3 px-3">${row.particular}</td>
+                        <td class="py-3 px-3 text-right tabular-nums">${formatNu(row.amount)}</td>
+                        <td class="py-3 px-3">${row.date || '—'}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('payment-total').textContent = formatNu(total);
+
+            const sorted = [...paymentRows].sort((a, b) => a.sort.localeCompare(b.sort));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            sorted.forEach(row => {
+                let cls = '';
+                if (row.date) {
+                    const [d, m, y] = row.date.split('/').map(Number);
+                    const itemDate = new Date(y, m - 1, d);
+                    cls = itemDate < today ? 'past' : 'future';
+                }
+                timeline.innerHTML += `
+                    <div class="timeline-item ${cls}">
+                        <p class="text-xs text-gray-500">${row.date || 'Date TBD'}</p>
+                        <p class="font-medium text-slate-800 text-sm">${row.particular}</p>
+                        <p class="text-sm text-slate-600 tabular-nums">Nu. ${formatNu(row.amount)}</p>
+                    </div>
+                `;
+            });
+        }
 
         const checklistData = [
             {
@@ -364,11 +374,8 @@
         ];
 
         function loadCheckedState() {
-            try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            } catch {
-                return {};
-            }
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+            catch { return {}; }
         }
 
         function saveCheckedState(state) {
@@ -382,47 +389,42 @@
 
             checklistData.forEach((section, sIdx) => {
                 const sectionEl = document.createElement('div');
-                sectionEl.className = 'border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm';
+                sectionEl.className = 'border border-gray-200 rounded-lg overflow-hidden';
 
                 const rowsHtml = section.items.map(item => {
                     const badgeClass = item.priority === 'High'
                         ? 'bg-rose-50 text-rose-700 border-rose-200'
-                        : 'bg-slate-100 text-slate-700 border-slate-300';
+                        : 'bg-slate-100 text-slate-600 border-slate-200';
                     const checked = saved[item.id] ? 'checked' : '';
 
                     return `
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="py-3 px-4 w-12 text-gray-400 font-mono text-xs">${item.id}</td>
-                            <td class="py-3 px-4 text-slate-700 font-medium">${item.text}</td>
-                            <td class="py-3 px-4 w-24">
-                                <span class="px-2 py-0.5 text-xs font-bold rounded border ${badgeClass}">${item.priority}</span>
-                            </td>
-                            <td class="py-3 px-4 w-20 text-center">
-                                <input type="checkbox" id="chk-${item.id}" data-item-id="${item.id}" onchange="onChecklistChange(this)"
-                                    class="w-5 h-5 accent-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer" ${checked}>
+                        <tr class="hover:bg-slate-50/50">
+                            <td class="py-2 px-3 w-12 text-gray-400 font-mono text-xs">${item.id}</td>
+                            <td class="py-2 px-3 text-slate-700">${item.text}</td>
+                            <td class="py-2 px-3 w-20"><span class="px-1.5 py-0.5 text-[10px] font-semibold rounded border ${badgeClass}">${item.priority}</span></td>
+                            <td class="py-2 px-3 w-16 text-center">
+                                <input type="checkbox" data-item-id="${item.id}" onchange="onChecklistChange(this)" class="w-4 h-4 accent-indigo-600 cursor-pointer" ${checked}>
                             </td>
                         </tr>
                     `;
                 }).join('');
 
                 sectionEl.innerHTML = `
-                    <div class="bg-slate-800 text-white px-5 py-4 flex justify-between items-center cursor-pointer select-none" onclick="toggleSection('sec-${sIdx}')">
-                        <span class="font-bold tracking-wide text-sm">${section.category}</span>
-                        <i data-lucide="chevron-down" id="icon-sec-${sIdx}" class="w-4 h-4 transform transition-transform"></i>
-                    </div>
-                    <div id="sec-${sIdx}" class="overflow-x-auto transition-all duration-200">
-                        <table class="w-full text-left border-collapse">
+                    <button type="button" class="w-full bg-slate-800 text-white px-4 py-3 flex justify-between items-center text-left text-sm font-semibold" onclick="toggleSection('sec-${sIdx}')">
+                        <span>${section.category}</span>
+                        <i data-lucide="chevron-down" id="icon-sec-${sIdx}" class="w-4 h-4"></i>
+                    </button>
+                    <div id="sec-${sIdx}" class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
                             <thead>
-                                <tr class="bg-slate-50 border-b text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                                    <th class="py-2 px-4">ID</th>
-                                    <th class="py-2 px-4">Requirement Description</th>
-                                    <th class="py-2 px-4">Priority</th>
-                                    <th class="py-2 px-4 text-center">Status</th>
+                                <tr class="bg-slate-50 border-b text-[10px] uppercase text-gray-400">
+                                    <th class="py-2 px-3">ID</th>
+                                    <th class="py-2 px-3">Requirement</th>
+                                    <th class="py-2 px-3">Priority</th>
+                                    <th class="py-2 px-3 text-center">Done</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100 text-xs">
-                                ${rowsHtml}
-                            </tbody>
+                            <tbody class="divide-y divide-gray-100">${rowsHtml}</tbody>
                         </table>
                     </div>
                 `;
@@ -435,14 +437,8 @@
             const el = document.getElementById(id);
             const icon = document.getElementById('icon-' + id);
             if (!el || !icon) return;
-
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                icon.classList.remove('rotate-180');
-            } else {
-                el.classList.add('hidden');
-                icon.classList.add('rotate-180');
-            }
+            el.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
         }
 
         function onChecklistChange(checkbox) {
@@ -456,19 +452,15 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"][data-item-id]');
             const total = checkboxes.length;
             let checkedCount = 0;
-
-            checkboxes.forEach(chk => {
-                if (chk.checked) checkedCount++;
-            });
-
+            checkboxes.forEach(chk => { if (chk.checked) checkedCount++; });
             const percent = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
-
             document.getElementById('compliance-progress-bar').style.width = percent + '%';
-            document.getElementById('compliance-progress-label').innerText = `${percent}% Completed (${checkedCount}/${total})`;
+            document.getElementById('compliance-progress-label').innerText = percent + '% (' + checkedCount + '/' + total + ')';
             document.getElementById('overall-progress-text').innerText = percent + '%';
         }
 
         window.onload = () => {
+            renderPayments();
             renderChecklist();
             calculateProgress();
         };
