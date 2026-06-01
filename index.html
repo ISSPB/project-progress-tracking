@@ -210,6 +210,76 @@
             border-bottom: 1px solid var(--border-subtle);
         }
 
+        .site-header-top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.25rem;
+        }
+
+        .live-system-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bg-void);
+            background: linear-gradient(135deg, var(--accent-gold-bright), var(--accent-gold));
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px var(--glow-gold);
+            transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
+        }
+
+        .live-system-cta:hover,
+        .live-system-cta:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px var(--glow-gold);
+            color: var(--bg-void);
+        }
+
+        .live-system-cta svg {
+            width: 1.125rem;
+            height: 1.125rem;
+            flex-shrink: 0;
+        }
+
+        .live-system-banner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.15rem 1.35rem;
+            margin-bottom: 1.25rem;
+            background: rgba(74, 155, 136, 0.12);
+            border: 1px solid rgba(74, 155, 136, 0.35);
+            border-radius: var(--radius);
+        }
+
+        .live-system-banner p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .live-system-banner strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .live-system-banner a:not(.live-system-cta) {
+            color: var(--accent-gold-bright);
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
         .site-header h1 {
             font-family: var(--font-display);
             font-size: clamp(1.75rem, 5vw, 2.5rem);
@@ -402,7 +472,6 @@
         .budget-grid {
             display: grid;
             gap: 0.5rem;
-            max-width: 420px;
             margin-bottom: 1.5rem;
         }
 
@@ -713,8 +782,16 @@
 
     <div class="shell">
         <header class="site-header reveal">
-            <h1>Integrated System — Project Progress</h1>
-            <p class="meta">Kickoff <strong>03/02/2026</strong> · Handover <strong>23/06/2026</strong> · 20-week contract</p>
+            <div class="site-header-top">
+                <div>
+                    <h1>Integrated System — Project Progress</h1>
+                    <p class="meta">Kickoff <strong>03/02/2026</strong> · Handover <strong>23/06/2026</strong> · 20-week contract</p>
+                </div>
+                <a class="live-system-cta" href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Visit live system
+                </a>
+            </div>
             <span class="header-rule" aria-hidden="true"></span>
         </header>
 
@@ -728,6 +805,13 @@
         <section id="overview" class="section-block reveal">
             <h2 class="section-heading">Overview</h2>
             <p class="section-desc">Key dates, budget use, and GovTech handover checklist at a glance.</p>
+            <div class="live-system-banner" role="status">
+                <p><strong>System live.</strong> The Integrated System (Zhichar) is deployed at <a href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">www.zhichar.systems.gov.bt</a></p>
+                <a class="live-system-cta" href="https://www.zhichar.systems.gov.bt" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Open www.zhichar.systems.gov.bt
+                </a>
+            </div>
             <div class="stat-grid" aria-label="Summary metrics">
                 <article class="stat-card stat-card--hero">
                     <p class="stat-label">Days until handover</p>
